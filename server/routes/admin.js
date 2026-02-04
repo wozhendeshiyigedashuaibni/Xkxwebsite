@@ -1,5 +1,5 @@
 import express from 'express';
-import { prisma } from '../index.js';
+import { prisma } from '../prisma.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { upload } from '../middleware/upload.js';
 
