@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { PrismaClient } from '@prisma/client';
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
@@ -10,6 +12,8 @@ import adminRoutes from './routes/admin.js';
 
 // Load environment variables from root directory .env file
 dotenv.config({ path: '../.env' });
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const prisma = new PrismaClient({
@@ -38,6 +42,9 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Static uploads directory
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 // Public routes
 app.use('/api/auth', authRoutes);
