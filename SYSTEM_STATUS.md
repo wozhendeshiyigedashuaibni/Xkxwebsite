@@ -25,16 +25,20 @@
   - Hono web server
 
 ### Database
-- ✅ SQLite with Prisma ORM
+- ✅ Prisma ORM 7.x (latest version)
+- ✅ PostgreSQL (Supabase) configuration ready
 - ✅ Schema defined (`/prisma/schema.prisma`)
+- ✅ Prisma config (`/prisma.config.ts`) - New format for v7
 - ✅ Migrations ready
 - ✅ Seed data script
 
 ### Configuration Files
-- ✅ `.env` - Backend environment variables
+- ✅ `.env.example` - Environment variables template
+- ✅ `.env` - Backend environment variables (not in Git)
 - ✅ `.env.local` - Frontend environment variables
 - ✅ `.gitignore` - Proper git exclusions
 - ✅ `vite.config.ts` - Proxy to backend configured
+- ✅ `prisma.config.ts` - Prisma 7.x database configuration
 
 ---
 
@@ -63,7 +67,38 @@ VITE_USE_MOCK=true
 
 ## 🔄 How to Switch to Real Backend
 
-### Method 1: Quick Switch (Data persists in SQLite)
+### Option 1: Use Supabase PostgreSQL (推荐生产环境)
+
+**快速配置（5分钟）**：
+1. 参考 [SUPABASE_QUICKSTART.md](./SUPABASE_QUICKSTART.md) 
+2. 或查看详细指南 [SUPABASE_CONFIG.md](./SUPABASE_CONFIG.md)
+
+**快速命令**：
+```bash
+# 1. 配置 .env 文件（填入 Supabase 连接信息）
+cp .env.example .env
+# 编辑 .env，填入 DATABASE_URL 和 DIRECT_URL
+
+# 2. 验证配置
+npm run db:check
+
+# 3. 推送 schema 到 Supabase
+npm run db:push
+
+# 4. 填充初始数据（可选）
+npm run db:seed
+
+# 5. 启动服务器
+npm run server
+```
+
+**优势**：
+- ✅ 生产级 PostgreSQL 数据库
+- ✅ 自动备份和扩展
+- ✅ 免费开始，按需付费
+- ✅ 内置数据库管理界面
+
+### Option 2: Use SQLite Locally (开发环境快速测试)
 
 **Step 1:** Install dependencies (one time only)
 ```bash

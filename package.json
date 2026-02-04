@@ -8,9 +8,12 @@
     "build": "vite build",
     "server": "node server/index.js",
     "start": "npm run dev & npm run server",
-    "db:migrate": "cd server && npx prisma migrate dev",
-    "db:seed": "cd server && node seed.js",
-    "db:studio": "cd server && npx prisma studio"
+    "db:migrate": "npx prisma migrate dev",
+    "db:push": "npx prisma db push",
+    "db:generate": "npx prisma generate",
+    "db:seed": "node server/seed.js",
+    "db:studio": "npx prisma studio",
+    "db:check": "node check-supabase.js"
   },
   "dependencies": {
     "lucide-react": "0.487.0",

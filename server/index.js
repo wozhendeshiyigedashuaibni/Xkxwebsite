@@ -8,13 +8,31 @@ import contentRoutes from './routes/content.js';
 import leadRoutes from './routes/leads.js';
 import adminRoutes from './routes/admin.js';
 
-dotenv.config();
+// Load environment variables from root directory .env file
+dotenv.config({ path: '../.env' });
 
 const app = express();
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  log: ['error', 'warn'],
+});
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+// Test database connection on startup
+async function testDatabaseConnection() {
+  try {
+    await prisma.$connect();
+    console.log('✅ Database connected successfully');
+  } catch (error) {
+    console.error('❌ Database connection failed:', error.message);
+    console.error('💡 Please check your DATABASE_URL in .env file');
+    process.exit(1);
+  }
+}
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -28,12 +46,43 @@ app.use('/api/leads', leadRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get('/api/health', async (req, res) => {
+  try {
+    // Test database connectivity
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ 
+      status: 'ok', 
+      database: 'connected',
+      timestamp: new Date().toISOString() 
+    });
+  } catch (error) {
+    res.status(503).json({ 
+      status: 'error', 
+      database: 'disconnected',
+      message: error.message,
+      timestamp: new Date().toISOString() 
+    });
+  }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('\n🛑 Shutting down gracefully...');
+  await prisma.$disconnect();
+  process.exit(0);
 });
 
-export { prisma };
+process.on('SIGTERM', async () => {
+  console.log('\n🛑 Shutting down gracefully...');
+  await prisma.$disconnect();
+  process.exit(0);
+});
+
+// Start server
+testDatabaseConnection().then(() => {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+  });
+});

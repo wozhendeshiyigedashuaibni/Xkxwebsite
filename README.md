@@ -16,10 +16,24 @@ npm run dev
 
 ### Option 2: Real Backend (For Production-like Testing)
 
+**快速开始（使用 Supabase PostgreSQL）**:
+```bash
+# 1. 配置 Supabase 数据库（参考 SUPABASE_QUICKSTART.md）
+cp .env.example .env
+# 编辑 .env，填入 Supabase 连接信息
+
+# 2. 验证并推送 schema
+npm run db:check
+npm run db:push
+
+# 3. 启动服务器
+npm run server
+```
+
+**或使用 SQLite 本地测试**:
 ```bash
 # 1. Install & setup
-cd server && npm install && cd ..
-npx prisma generate
+cd server && npm install && cd ..\nnpx prisma generate
 npx prisma migrate dev --name init
 
 # 2. Configure
@@ -32,7 +46,9 @@ npm run server
 npm run dev
 ```
 
-👉 **See [BACKEND_SETUP.md](./BACKEND_SETUP.md) for detailed setup**
+👉 **Supabase 配置**: [SUPABASE_QUICKSTART.md](./SUPABASE_QUICKSTART.md) (5分钟快速配置)  
+👉 **详细配置指南**: [SUPABASE_CONFIG.md](./SUPABASE_CONFIG.md)  
+👉 **后端设置**: [BACKEND_SETUP.md](./BACKEND_SETUP.md) for detailed setup
 
 ## Features
 
@@ -54,7 +70,8 @@ npm run dev
 
 **Backend:**
 - Node.js + Express
-- SQLite + Prisma ORM
+- PostgreSQL (Supabase) / SQLite
+- Prisma ORM 7.x
 - JWT Authentication
 - Multer (file uploads)
 
@@ -88,7 +105,12 @@ VITE_USE_MOCK=true
 - `npm run dev` - Start frontend development server
 - `npm run server` - Start backend server
 - `npm run build` - Build for production
-- `npx prisma studio` - Open database GUI
+- `npm run db:check` - Check Supabase database connection
+- `npm run db:push` - Push schema to database
+- `npm run db:migrate` - Create migration files
+- `npm run db:generate` - Generate Prisma Client
+- `npm run db:seed` - Seed database with initial data
+- `npm run db:studio` - Open Prisma Studio GUI
 
 ## Troubleshooting
 
@@ -126,7 +148,11 @@ Restart the dev server. Vite only loads `.env` files on startup.
 
 ## Documentation
 
+- [Supabase 快速配置](./SUPABASE_QUICKSTART.md) - 5分钟快速连接 Supabase 数据库
+- [Supabase 详细配置](./SUPABASE_CONFIG.md) - 完整的 Supabase 配置和故障排查
+- [数据库迁移指南](./MIGRATION_GUIDE.md) - Prisma 7.x 迁移说明
 - [Backend Setup Guide](./BACKEND_SETUP.md) - Complete backend configuration
+- [System Status](./SYSTEM_STATUS.md) - Current setup status and troubleshooting
 - [Setup Instructions](./SETUP.md) - Original setup documentation
 
 ## License

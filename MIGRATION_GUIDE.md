@@ -35,6 +35,22 @@ NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
 ```
 
+### 3. Prisma 7.x 配置说明
+
+本项目使用 **Prisma 7.x**，配置方式与旧版本不同：
+
+- ✅ `prisma/schema.prisma` 中的 `datasource db` **只保留 `provider`**
+- ✅ 数据库连接配置迁移到 **根目录的 `prisma.config.ts`** 文件
+- ✅ `prisma.config.ts` 通过 `defineConfig` 读取环境变量 `DATABASE_URL` 和 `DIRECT_URL`
+
+**配置文件结构**：
+```
+项目根目录/
+├── prisma/
+│   └── schema.prisma        # 只定义 models 和 provider
+└── prisma.config.ts         # 数据库连接配置
+```
+
 ---
 
 ## 🚀 迁移步骤
