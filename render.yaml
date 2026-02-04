@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: xkx-backend
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: cd server && npm install && npx prisma generate
+    startCommand: cd server && node index.js
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: PORT
+        value: 3001
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        value: https://xkx-website.vercel.app
