@@ -1,7 +1,9 @@
 import { useNavigation } from '@/hooks/useNavigation';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export function AboutPage() {
   const onNavigate = useNavigation();
+  const { t } = useTranslation();
 
   return (
     <div className="flex flex-col">

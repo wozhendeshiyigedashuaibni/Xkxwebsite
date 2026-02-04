@@ -123,7 +123,7 @@ export function ContactPage() {
                       {CONTACT_CONFIG.phone}
                     </a>
                     <a
-                      href={CONTACT_CONFIG.whatsapp}
+                      href={CONTACT_CONFIG.whatsapp.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-neutral-600 hover:text-black transition-colors block mt-1"
@@ -140,7 +140,7 @@ export function ContactPage() {
                   <div>
                     <div className="font-medium mb-1">{t('contact.info.address')}</div>
                     <p className="text-neutral-600">
-                      {CONTACT_CONFIG.address}
+                      {CONTACT_CONFIG.address.full}
                     </p>
                   </div>
                 </div>

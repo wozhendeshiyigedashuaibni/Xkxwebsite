@@ -72,7 +72,6 @@ function AppContent() {
 
       <Footer />
       <WhatsAppFloat />
-      <DevModeBanner />
     </div>
   );
 }

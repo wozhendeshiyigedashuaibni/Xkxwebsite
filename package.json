@@ -16,17 +16,15 @@
     "db:check": "node check-supabase.js"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "lucide-react": "0.487.0",
-    "react-router-dom": "^7.13.0",
-    "@prisma/client": "^7.3.0"
+    "react-router-dom": "^7.13.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.1.12",
     "@vitejs/plugin-react": "4.7.0",
     "tailwindcss": "4.1.12",
-    "vite": "6.3.5",
-    "prisma": "^7.3.0",
-    "dotenv": "^16.4.5"
+    "vite": "6.3.5"
   },
   "peerDependencies": {
     "react": "18.3.1",

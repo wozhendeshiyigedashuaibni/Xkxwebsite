@@ -1,4 +1,5 @@
 import { useNavigation } from '@/hooks/useNavigation';
+import { CheckCircle, ArrowRight, Download } from 'lucide-react';
 
 export function OemOdmPage() {
   const onNavigate = useNavigation();

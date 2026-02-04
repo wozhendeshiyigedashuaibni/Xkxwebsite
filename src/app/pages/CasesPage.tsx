@@ -1,4 +1,5 @@
 import { useNavigation } from '@/hooks/useNavigation';
+import { ArrowRight } from 'lucide-react';
 
 export function CasesPage() {
   const onNavigate = useNavigation();

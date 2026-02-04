@@ -1,4 +1,6 @@
 import { useNavigation } from '@/hooks/useNavigation';
+import { Factory, Package, Layers, ClipboardCheck, ArrowRight } from 'lucide-react';
+import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 
 export function FactoryPage() {
   const onNavigate = useNavigation();
