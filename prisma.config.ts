@@ -1,10 +1,12 @@
-import { defineConfig } from '@prisma/client/generator-build'
+import 'dotenv/config'
+import { defineConfig } from 'prisma/config'
 
 export default defineConfig({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL || '',
-      directUrl: process.env.DIRECT_URL || '',
-    },
+  datasource: {
+    url: process.env.DATABASE_URL!,
+  },
+  migrate: {
+    datasourceUrl: process.env.DATABASE_URL!,
+    directUrl: process.env.DIRECT_URL!,
   },
 })
