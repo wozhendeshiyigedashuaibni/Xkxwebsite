@@ -13,6 +13,9 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { CasesPage } from './pages/CasesPage';
 import { ContactPage } from './pages/ContactPage';
 import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
+import { AdminAuthProvider } from '@/contexts/AdminAuthContext';
+import AdminLoginPage from './pages/AdminLoginPage';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -67,6 +70,8 @@ function AppContent() {
           <Route path="/cases" element={<CasesPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/admin-login" element={<AdminLoginPage />} />
+          <Route path="/admin" element={<ProtectedRoute><AdminLoginPage /></ProtectedRoute>} />
         </Routes>
       </main>
 
@@ -79,9 +84,11 @@ function AppContent() {
 export default function App() {
   return (
     <LanguageProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <AdminAuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AdminAuthProvider>
     </LanguageProvider>
   );
 }

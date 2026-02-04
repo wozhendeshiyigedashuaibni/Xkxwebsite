@@ -171,6 +171,104 @@ class ApiClient {
       formData
     );
   }
+
+  // ========== ADMIN API ==========
+  // 需要传入 token 的请求
+  private async authenticatedRequest<T>(
+    endpoint: string,
+    token: string,
+    options?: RequestInit
+  ): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      headers: {
+        ...options?.headers,
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
+  // Admin - Products
+  async adminGetProducts(token: string, params?: { category?: string; search?: string }) {
+    const query = new URLSearchParams();
+    if (params?.category) query.append('category', params.category);
+    if (params?.search) query.append('search', params.search);
+    
+    const queryString = query.toString();
+    return this.authenticatedRequest<Product[]>(
+      `/admin/products${queryString ? `?${queryString}` : ''}`,
+      token
+    );
+  }
+
+  async adminGetProduct(token: string, id: number) {
+    return this.authenticatedRequest<Product>(`/admin/products/${id}`, token);
+  }
+
+  async adminCreateProduct(token: string, data: Partial<Product>) {
+    return this.authenticatedRequest<Product>('/admin/products', token, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async adminUpdateProduct(token: string, id: number, data: Partial<Product>) {
+    return this.authenticatedRequest<Product>(`/admin/products/${id}`, token, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async adminDeleteProduct(token: string, id: number) {
+    return this.authenticatedRequest<{ message: string }>(`/admin/products/${id}`, token, {
+      method: 'DELETE',
+    });
+  }
+
+  // Admin - Content
+  async adminGetContent(token: string) {
+    return this.authenticatedRequest<ContentItem[]>('/admin/content', token);
+  }
+
+  async adminGetContentByKey(token: string, key: string) {
+    return this.authenticatedRequest<ContentItem>(`/admin/content/${key}`, token);
+  }
+
+  async adminUpdateContent(token: string, key: string, value: any) {
+    return this.authenticatedRequest<ContentItem>(`/admin/content/${key}`, token, {
+      method: 'PUT',
+      body: JSON.stringify({ value }),
+    });
+  }
+
+  async adminDeleteContent(token: string, key: string) {
+    return this.authenticatedRequest<{ message: string; key: string }>(`/admin/content/${key}`, token, {
+      method: 'DELETE',
+    });
+  }
+
+  // Admin - Leads
+  async adminGetLeads(token: string, params?: { status?: string }) {
+    const query = new URLSearchParams();
+    if (params?.status) query.append('status', params.status);
+    
+    const queryString = query.toString();
+    return this.authenticatedRequest<Lead[]>(
+      `/admin/leads${queryString ? `?${queryString}` : ''}`,
+      token
+    );
+  }
+
+  async adminGetLead(token: string, id: number) {
+    return this.authenticatedRequest<Lead>(`/admin/leads/${id}`, token);
+  }
+
+  async adminUpdateLead(token: string, id: number, status: string) {
+    return this.authenticatedRequest<Lead>(`/admin/leads/${id}`, token, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    });
+  }
 }
 
 // ========== TYPES ==========
@@ -206,6 +304,27 @@ export interface LeadSubmission {
   phone?: string;
   message: string;
   files?: File[];
+}
+
+export interface ContentItem {
+  id: number;
+  key: string;
+  value: any;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Lead {
+  id: number;
+  name: string;
+  email: string;
+  company?: string;
+  phone?: string;
+  message: string;
+  files: string[];
+  status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Export singleton instance

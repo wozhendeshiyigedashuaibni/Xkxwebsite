@@ -17,6 +17,9 @@ const prisma = new PrismaClient({
 });
 const PORT = process.env.PORT || 3001;
 
+// Export prisma for use in routes
+export { prisma };
+
 // Test database connection on startup
 async function testDatabaseConnection() {
   try {
