@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理系统测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .status-card {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .status-card.success {
+            background: #f0fdf4;
+            border-color: #22c55e;
+        }
+        
+        .status-card h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #0ea5e9;
+        }
+        
+        .status-card.success h2 {
+            color: #22c55e;
+        }
+        
+        .test-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .test-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .test-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .test-result {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .test-result.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .test-result.pass {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .test-result.fail {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        button, .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: #000;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+        
+        .info-box {
+            background: #fffbeb;
+            border: 1px solid #fbbf24;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .info-box strong {
+            color: #92400e;
+        }
+        
+        #results {
+            margin-top: 20px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 后台管理系统测试</h1>
+        <p class="subtitle">诊断工具 - 检测系统状态</p>
+        
+        <div class="status-card success">
+            <h2>✅ 页面加载成功</h2>
+            <p>如果你能看到这个页面，说明：</p>
+            <ul class="test-list">
+                <li>✓ 前端服务器正在运行</li>
+                <li>✓ 静态文件可以正常加载</li>
+                <li>✓ 浏览器功能正常</li>
+            </ul>
+        </div>
+        
+        <div class="status-card">
+            <h2>📋 系统检测</h2>
+            <div id="results">
+                <button onclick="runTests()" class="btn-primary" style="width: 100%;">
+                    开始检测
+                </button>
+            </div>
+        </div>
+        
+        <div class="btn-group">
+            <a href="/admin-login" class="btn btn-primary">后台登录</a>
+            <a href="/admin/dashboard" class="btn btn-primary">简化后台</a>
+            <a href="/admin/products" class="btn btn-secondary">产品管理</a>
+            <a href="/" class="btn btn-secondary">返回首页</a>
+        </div>
+        
+        <div class="info-box">
+            <strong>💡 提示：</strong><br>
+            • 如果看到这个页面，前端是正常的<br>
+            • 点击"开始检测"测试后端连接<br>
+            • 如果后台页面空白，请查看浏览器控制台（F12）<br>
+            • 访问路径：<code>http://localhost:5173/admin-test.html</code>
+        </div>
+    </div>
+    
+    <script>
+        async function runTests() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>检测中...</p></div>';
+            
+            const tests = [
+                { name: '后端服务器连接', url: 'http://localhost:3001/api/products', method: 'GET' },
+                { name: '登录 API', url: 'http://localhost:3001/api/auth/login', method: 'POST', body: { username: 'test', password: 'test' } },
+            ];
+            
+            let html = '<ul class="test-list">';
+            
+            for (const test of tests) {
+                try {
+                    const options = {
+                        method: test.method,
+                        headers: { 'Content-Type': 'application/json' },
+                    };
+                    
+                    if (test.body) {
+                        options.body = JSON.stringify(test.body);
+                    }
+                    
+                    const response = await fetch(test.url, options);
+                    const status = response.ok ? 'pass' : 'fail';
+                    const statusText = response.ok ? '✓ 通过' : `✗ 失败 (${response.status})`;
+                    
+                    html += `<li>${test.name} <span class="test-result ${status}">${statusText}</span></li>`;
+                } catch (error) {
+                    html += `<li>${test.name} <span class="test-result fail">✗ 连接失败</span></li>`;
+                }
+            }
+            
+            // 检查 LocalStorage
+            const token = localStorage.getItem('admin-token');
+            const tokenStatus = token ? 'pass' : 'fail';
+            const tokenText = token ? '✓ 已登录' : '✗ 未登录';
+            html += `<li>登录状态 <span class="test-result ${tokenStatus}">${tokenText}</span></li>`;
+            
+            html += '</ul>';
+            
+            html += '<button onclick="runTests()" class="btn-secondary" style="width: 100%; margin-top: 15px;">重新检测</button>';
+            
+            resultsDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

@@ -15,6 +15,9 @@ import { ContactPage } from './pages/ContactPage';
 import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext';
 import AdminLoginPage from './pages/AdminLoginPage';
+import AdminProductsPage from './pages/AdminProductsPage';
+import AdminContentPage from './pages/AdminContentPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 // Scroll to top on route change
@@ -48,16 +51,17 @@ function AppContent() {
 
   const currentPage = getCurrentPage();
   const isProductDetail = currentPage === 'product-detail';
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
     <div dir={currentLanguage === 'AR' ? 'rtl' : 'ltr'} className="min-h-screen flex flex-col">
       <ScrollToTop />
       
       {/* Development Mode Banner */}
-      <DevModeBanner />
+      {!isAdminRoute && <DevModeBanner />}
       
-      {/* Header - not sticky on product detail page */}
-      <Header currentPage={currentPage} sticky={!isProductDetail} />
+      {/* Header - not shown on admin routes */}
+      {!isAdminRoute && <Header currentPage={currentPage} sticky={!isProductDetail} />}
       
       <main className="flex-1">
         <Routes>
@@ -71,12 +75,15 @@ function AppContent() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/admin-login" element={<AdminLoginPage />} />
-          <Route path="/admin" element={<ProtectedRoute><AdminLoginPage /></ProtectedRoute>} />
+          <Route path="/admin/products" element={<ProtectedRoute><AdminProductsPage /></ProtectedRoute>} />
+          <Route path="/admin/content" element={<ProtectedRoute><AdminContentPage /></ProtectedRoute>} />
+          <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
         </Routes>
       </main>
 
-      <Footer />
-      <WhatsAppFloat />
+      {/* Footer - not shown on admin routes */}
+      {!isAdminRoute && <Footer />}
+      {!isAdminRoute && <WhatsAppFloat />}
     </div>
   );
 }
