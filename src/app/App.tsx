@@ -1,78 +1,78 @@
-import { useState } from 'react';
-import { LanguageProvider } from '@/contexts/LanguageContext';
-import { Header } from '@/app/components/Header';
-import { Footer } from '@/app/components/Footer';
-import { WhatsAppFloat } from '@/app/components/WhatsAppFloat';
-import { HomePage } from '@/app/pages/HomePage';
-import { CollectionsPage } from '@/app/pages/CollectionsPage';
-import { ProductDetailPage } from '@/app/pages/ProductDetailPage';
-import { OemOdmPage } from '@/app/pages/OemOdmPage';
-import { FactoryPage } from '@/app/pages/FactoryPage';
-import { CasesPage } from '@/app/pages/CasesPage';
-import { AboutPage } from '@/app/pages/AboutPage';
-import { ContactPage } from '@/app/pages/ContactPage';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Header } from './components/Header';
+import { Footer } from './components/Footer';
+import { WhatsAppFloat } from './components/WhatsAppFloat';
+import { DevModeBanner } from './components/DevModeBanner';
+import { HomePage } from './pages/HomePage';
+import { AboutPage } from './pages/AboutPage';
+import { FactoryPage } from './pages/FactoryPage';
+import { OemOdmPage } from './pages/OemOdmPage';
+import { CollectionsPage } from './pages/CollectionsPage';
+import { ProductDetailPage } from './pages/ProductDetailPage';
+import { CasesPage } from './pages/CasesPage';
+import { ContactPage } from './pages/ContactPage';
+import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 
-type Page = 'home' | 'collections' | 'product-detail' | 'oem-odm' | 'factory' | 'cases' | 'about' | 'contact';
+// Scroll to top on route change
+function ScrollToTop() {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  return null;
+}
 
 function AppContent() {
-  const [currentPage, setCurrentPage] = useState<Page>('home');
-  const [collectionCategory, setCollectionCategory] = useState<string>('All');
-  const [selectedProductId, setSelectedProductId] = useState<string>('');
+  const { currentLanguage } = useLanguage();
+  const location = useLocation();
 
-  const handleNavigate = (page: string, options?: { category?: string; anchor?: string; productId?: string }) => {
-    setCurrentPage(page as Page);
-    
-    if (page === 'collections' && !options?.category) {
-      setCollectionCategory('All');
-    } else if (options?.category) {
-      setCollectionCategory(options.category);
-    }
-    
-    if (options?.productId) {
-      setSelectedProductId(options.productId);
-    }
-    
-    if (options?.anchor) {
-      setTimeout(() => {
-        const element = document.getElementById(options.anchor);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 100);
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  // Get current page from location for Header active state
+  const getCurrentPage = () => {
+    const path = location.pathname;
+    if (path === '/') return 'home';
+    if (path.startsWith('/collections')) return 'collections';
+    if (path.startsWith('/product/')) return 'product-detail';
+    if (path === '/oem-odm') return 'oem-odm';
+    if (path === '/factory') return 'factory';
+    if (path === '/cases') return 'cases';
+    if (path === '/about') return 'about';
+    if (path === '/contact') return 'contact';
+    return 'home';
   };
 
+  const currentPage = getCurrentPage();
+  const isProductDetail = currentPage === 'product-detail';
+
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Main Navigation */}
-      {currentPage !== 'product-detail' && (
-        <>
-          <Header currentPage={currentPage} onNavigate={handleNavigate} />
-        </>
-      )}
+    <div dir={currentLanguage === 'AR' ? 'rtl' : 'ltr'} className="min-h-screen flex flex-col">
+      <ScrollToTop />
       
-      {/* Product Detail Page - Navigation without sticky */}
-      {currentPage === 'product-detail' && (
-        <>
-          <Header currentPage={currentPage} onNavigate={handleNavigate} sticky={false} />
-        </>
-      )}
+      {/* Development Mode Banner */}
+      <DevModeBanner />
+      
+      {/* Header - not sticky on product detail page */}
+      <Header currentPage={currentPage} sticky={!isProductDetail} />
       
       <main className="flex-1">
-        {currentPage === 'home' && <HomePage onNavigate={handleNavigate} />}
-        {currentPage === 'collections' && <CollectionsPage onNavigate={handleNavigate} category={collectionCategory} />}
-        {currentPage === 'product-detail' && <ProductDetailPage onNavigate={handleNavigate} productId={selectedProductId} />}
-        {currentPage === 'oem-odm' && <OemOdmPage onNavigate={handleNavigate} />}
-        {currentPage === 'factory' && <FactoryPage onNavigate={handleNavigate} />}
-        {currentPage === 'cases' && <CasesPage onNavigate={handleNavigate} />}
-        {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
-        {currentPage === 'contact' && <ContactPage onNavigate={handleNavigate} />}
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/collections" element={<CollectionsPage />} />
+          <Route path="/collections/:category" element={<CollectionsPage />} />
+          <Route path="/product/:productId" element={<ProductDetailPage />} />
+          <Route path="/oem-odm" element={<OemOdmPage />} />
+          <Route path="/factory" element={<FactoryPage />} />
+          <Route path="/cases" element={<CasesPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+        </Routes>
       </main>
 
-      <Footer onNavigate={handleNavigate} />
+      <Footer />
       <WhatsAppFloat />
+      <DevModeBanner />
     </div>
   );
 }
@@ -80,7 +80,9 @@ function AppContent() {
 export default function App() {
   return (
     <LanguageProvider>
-      <AppContent />
+      <Router>
+        <AppContent />
+      </Router>
     </LanguageProvider>
   );
 }

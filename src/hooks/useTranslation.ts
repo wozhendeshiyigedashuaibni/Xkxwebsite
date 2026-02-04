@@ -3,10 +3,16 @@ import { translations } from '@/i18n/translations';
 
 export function useTranslation() {
   const { currentLanguage } = useLanguage();
-  
+
   const t = (key: string): string => {
-    return translations[currentLanguage][key] || key;
+    const byLang = translations[currentLanguage]?.[key];
+    if (byLang) return byLang;
+
+    const byEn = translations.EN?.[key];
+    if (byEn) return byEn;
+
+    return key;
   };
-  
+
   return { t, currentLanguage };
 }

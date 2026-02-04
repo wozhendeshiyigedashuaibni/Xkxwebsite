@@ -1,19 +1,21 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage, type LanguageCode } from '@/contexts/LanguageContext';
+import { CONTACT_CONFIG } from '@/config/contact';
 
 interface HeaderProps {
   currentPage: string;
-  onNavigate: (page: string, options?: { category?: string; anchor?: string }) => void;
   sticky?: boolean;
 }
 
-export function Header({ currentPage, onNavigate, sticky = true }: HeaderProps) {
+export function Header({ currentPage, sticky = true }: HeaderProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { t } = useTranslation();
   const { currentLanguage, setLanguage } = useLanguage();
+  const navigate = useNavigate();
 
   const languages: Array<{ code: LanguageCode; name: string; flag: string }> = [
     { code: 'EN', name: 'English', flag: '🇬🇧' },
@@ -48,6 +50,11 @@ export function Header({ currentPage, onNavigate, sticky = true }: HeaderProps) 
     'Denim & Bottoms',
   ];
 
+  // Helper function to convert category name to URL-safe slug
+  const toUrlSlug = (text: string) => {
+    return encodeURIComponent(text.replace(/\s+/g, '-').toLowerCase());
+  };
+
   const oemOdmItems = [
     { label: t('nav.dropdown.services'), value: 'services' },
     { label: t('nav.dropdown.sampling'), value: 'sampling' },
@@ -61,12 +68,12 @@ export function Header({ currentPage, onNavigate, sticky = true }: HeaderProps) 
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <button
-            onClick={() => onNavigate('home')}
+          <Link
+            to="/"
             className="text-2xl font-bold tracking-tight hover:opacity-80 transition-opacity"
           >
             XIKAIXI GARMENT
-          </button>
+          </Link>
 
           {/* Mobile Menu Button */}
           <button
@@ -79,14 +86,14 @@ export function Header({ currentPage, onNavigate, sticky = true }: HeaderProps) 
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
-            <button
-              onClick={() => onNavigate('home')}
+            <Link
+              to="/"
               className={`hover:opacity-60 transition-opacity ${
                 currentPage === 'home' ? 'opacity-100' : 'opacity-80'
               }`}
             >
               {t('nav.home')}
-            </button>
+            </Link>
 
             {/* Collections Dropdown */}
             <div
@@ -94,29 +101,27 @@ export function Header({ currentPage, onNavigate, sticky = true }: HeaderProps) 
               onMouseEnter={() => setOpenDropdown('collections')}
               onMouseLeave={() => setOpenDropdown(null)}
             >
-              <button
-                onClick={() => onNavigate('collections')}
+              <Link
+                to="/collections"
                 className={`flex items-center gap-1 hover:opacity-60 transition-opacity ${
                   currentPage === 'collections' ? 'opacity-100' : 'opacity-80'
                 }`}
               >
                 {t('nav.collections')}
                 <ChevronDown className="w-4 h-4" />
-              </button>
+              </Link>
               {openDropdown === 'collections' && (
                 <div className="absolute top-full left-0 pt-2">
                   <div className="w-56 bg-white border border-gray-200 shadow-lg rounded-md py-2">
                     {collectionsItems.map((item, index) => (
-                      <button
+                      <Link
                         key={item}
-                        onClick={() => {
-                          onNavigate('collections', { category: collectionsItemsSlugs[index] });
-                          setOpenDropdown(null);
-                        }}
+                        to={`/collections/${toUrlSlug(collectionsItemsSlugs[index])}`}
+                        onClick={() => setOpenDropdown(null)}
                         className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors"
                       >
                         {item}
-                      </button>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -129,27 +134,26 @@ export function Header({ currentPage, onNavigate, sticky = true }: HeaderProps) 
               onMouseEnter={() => setOpenDropdown('oem')}
               onMouseLeave={() => setOpenDropdown(null)}
             >
-              <button
-                onClick={() => onNavigate('oem-odm')}
+              <Link
+                to="/oem-odm"
                 className={`flex items-center gap-1 hover:opacity-60 transition-opacity ${
                   currentPage === 'oem-odm' ? 'opacity-100' : 'opacity-80'
                 }`}
               >
                 {t('nav.oem')}
                 <ChevronDown className="w-4 h-4" />
-              </button>
+              </Link>
               {openDropdown === 'oem' && (
                 <div className="absolute top-full left-0 pt-2">
                   <div className="w-56 bg-white border border-gray-200 shadow-lg rounded-md py-2">
                     {oemOdmItems.map((item) => (
-                      <button
+                      <Link
                         key={item.value}
+                        to={`/oem-odm#${item.value}`}
                         onClick={() => {
                           if (item.download) {
                             // Handle download
                             alert('Tech Pack Template download would start here');
-                          } else {
-                            onNavigate('oem-odm', { anchor: item.value });
                           }
                           setOpenDropdown(null);
                         }}
@@ -157,50 +161,50 @@ export function Header({ currentPage, onNavigate, sticky = true }: HeaderProps) 
                       >
                         {item.label}
                         {item.download && (
-                          <span className="text-xs text-gray-500 ml-2">(Download)</span>
+                          <span className="text-xs text-gray-500 ml-2">{t('header.resources.download')}</span>
                         )}
-                      </button>
+                      </Link>
                     ))}
                   </div>
                 </div>
               )}
             </div>
 
-            <button
-              onClick={() => onNavigate('factory')}
+            <Link
+              to="/factory"
               className={`hover:opacity-60 transition-opacity ${
                 currentPage === 'factory' ? 'opacity-100' : 'opacity-80'
               }`}
             >
               {t('nav.factory')}
-            </button>
+            </Link>
 
-            <button
-              onClick={() => onNavigate('cases')}
+            <Link
+              to="/cases"
               className={`hover:opacity-60 transition-opacity ${
                 currentPage === 'cases' ? 'opacity-100' : 'opacity-80'
               }`}
             >
               {t('nav.cases')}
-            </button>
+            </Link>
 
-            <button
-              onClick={() => onNavigate('about')}
+            <Link
+              to="/about"
               className={`hover:opacity-60 transition-opacity ${
                 currentPage === 'about' ? 'opacity-100' : 'opacity-80'
               }`}
             >
               {t('nav.about')}
-            </button>
+            </Link>
 
-            <button
-              onClick={() => onNavigate('contact')}
+            <Link
+              to="/contact"
               className={`hover:opacity-60 transition-opacity ${
                 currentPage === 'contact' ? 'opacity-100' : 'opacity-80'
               }`}
             >
               {t('nav.contact')}
-            </button>
+            </Link>
           </nav>
 
           {/* CTA Buttons - Desktop */}
@@ -250,83 +254,62 @@ export function Header({ currentPage, onNavigate, sticky = true }: HeaderProps) 
         {mobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col gap-4">
-              <button
-                onClick={() => {
-                  onNavigate('home');
-                  setMobileMenuOpen(false);
-                }}
+              <Link
+                to="/"
                 className={`text-left px-4 py-2 hover:bg-gray-50 transition-colors ${
                   currentPage === 'home' ? 'font-semibold' : ''
                 }`}
               >
                 {t('nav.home')}
-              </button>
-              <button
-                onClick={() => {
-                  onNavigate('collections');
-                  setMobileMenuOpen(false);
-                }}
+              </Link>
+              <Link
+                to="/collections"
                 className={`text-left px-4 py-2 hover:bg-gray-50 transition-colors ${
                   currentPage === 'collections' ? 'font-semibold' : ''
                 }`}
               >
                 {t('nav.collections')}
-              </button>
-              <button
-                onClick={() => {
-                  onNavigate('oem-odm');
-                  setMobileMenuOpen(false);
-                }}
+              </Link>
+              <Link
+                to="/oem-odm"
                 className={`text-left px-4 py-2 hover:bg-gray-50 transition-colors ${
                   currentPage === 'oem-odm' ? 'font-semibold' : ''
                 }`}
               >
                 {t('nav.oem')}
-              </button>
-              <button
-                onClick={() => {
-                  onNavigate('factory');
-                  setMobileMenuOpen(false);
-                }}
+              </Link>
+              <Link
+                to="/factory"
                 className={`text-left px-4 py-2 hover:bg-gray-50 transition-colors ${
                   currentPage === 'factory' ? 'font-semibold' : ''
                 }`}
               >
                 {t('nav.factory')}
-              </button>
-              <button
-                onClick={() => {
-                  onNavigate('cases');
-                  setMobileMenuOpen(false);
-                }}
+              </Link>
+              <Link
+                to="/cases"
                 className={`text-left px-4 py-2 hover:bg-gray-50 transition-colors ${
                   currentPage === 'cases' ? 'font-semibold' : ''
                 }`}
               >
                 {t('nav.cases')}
-              </button>
-              <button
-                onClick={() => {
-                  onNavigate('about');
-                  setMobileMenuOpen(false);
-                }}
+              </Link>
+              <Link
+                to="/about"
                 className={`text-left px-4 py-2 hover:bg-gray-50 transition-colors ${
                   currentPage === 'about' ? 'font-semibold' : ''
                 }`}
               >
                 {t('nav.about')}
-              </button>
-              <button
-                onClick={() => {
-                  onNavigate('contact');
-                  setMobileMenuOpen(false);
-                }}
+              </Link>
+              <Link
+                to="/contact"
                 className={`text-left px-4 py-2 hover:bg-gray-50 transition-colors ${
                   currentPage === 'contact' ? 'font-semibold' : ''
                 }`}
               >
                 {t('nav.contact')}
-              </button>
+              </Link>
               
               {/* Mobile Language Switcher */}
               <div className="px-4 py-2">
@@ -352,17 +335,14 @@ export function Header({ currentPage, onNavigate, sticky = true }: HeaderProps) 
               </div>
               
               <div className="px-4 py-2 flex flex-col gap-2">
-                <button
-                  onClick={() => {
-                    onNavigate('contact');
-                    setMobileMenuOpen(false);
-                  }}
+                <Link
+                  to="/contact"
                   className="w-full py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
                 >
                   {t('nav.quote')}
-                </button>
+                </Link>
                 <a
-                  href="https://wa.me/8618692498415"
+                  href={CONTACT_CONFIG.whatsapp.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-center"

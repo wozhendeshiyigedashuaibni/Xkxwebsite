@@ -1,10 +1,8 @@
-import { ArrowRight } from 'lucide-react';
+import { useNavigation } from '@/hooks/useNavigation';
 
-interface CasesPageProps {
-  onNavigate: (page: string) => void;
-}
+export function CasesPage() {
+  const onNavigate = useNavigation();
 
-export function CasesPage({ onNavigate }: CasesPageProps) {
   const cases = [
     {
       number: '01',

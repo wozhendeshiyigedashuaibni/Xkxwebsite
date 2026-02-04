@@ -1,6 +1,20 @@
 import { LanguageCode } from '@/contexts/LanguageContext';
 
 const enTranslations: Record<string, string> = {
+  // About Page
+  'about.title': 'About Us',
+  'about.hero.title': 'The Manufacturing Team Behind Reliable Collections',
+  'about.hero.subtitle': 'We support growing fashion brands with stable production, clear communication, and reliable timelines.',
+  'about.section1.title': 'Who We Are',
+  'about.section1.p1': 'We are a professional women\'s apparel manufacturer based in China, working with global brands through OEM and ODM services.',
+  'about.section1.p2': 'Our team understands both fashion design and production execution, helping brands turn ideas into sellable collections.',
+  'about.section2.title': 'What We Do',
+  'about.section2.p1': 'From tech pack review to sampling and bulk production, we manage the entire garment manufacturing process.',
+  'about.section2.p2': 'We focus on stable quality, realistic lead times, and production solutions that fit brand growth stages.',
+  'about.section3.title': 'Why Brands Choose Us',
+  'about.section3.p1': 'Clear communication, flexible MOQs, and consistent quality are the foundation of our long-term partnerships.',
+  'about.section3.p2': 'We work as a manufacturing partner, not just a factory, helping brands scale collections with confidence.',
+
   // Header
   'nav.home': 'Home',
   'nav.collections': 'Collections',
@@ -11,7 +25,7 @@ const enTranslations: Record<string, string> = {
   'nav.contact': 'Contact',
   'nav.whatsapp': 'WhatsApp',
   'nav.quote': 'Get a Quote',
-  
+
   // Header Dropdowns
   'nav.dropdown.dresses': 'Dresses',
   'nav.dropdown.womensets': 'Women Sets',
@@ -37,17 +51,20 @@ const enTranslations: Record<string, string> = {
   'category.denim': 'Denim & Bottoms',
   
   // HomePage Hero
-  'home.hero.title': 'OEM/ODM Women\'s Apparel Manufacturer for Growing Fashion Brands',
-  'home.hero.subtitle': 'From tech pack to bulk production — stable quality, realistic timelines, and clear communication.',
-  'home.hero.moq': 'MOQ:',
-  'home.hero.moq.value': 'from 100–300 pcs/style',
-  'home.hero.samples': 'Samples:',
-  'home.hero.samples.value': '7–10 working days',
-  'home.hero.bulk': 'Bulk lead time:',
-  'home.hero.bulk.value': '25–35 days',
+  'home.hero.title': 'Professional Women\'s Apparel OEM/ODM Manufacturer',
+  'home.hero.subtitle': 'From design to delivery — We support brands & wholesalers with flexible MOQ, fast sampling, and reliable quality control.',
+  'home.hero.moq': 'MOQ',
+  'home.hero.moq.value': '50 pcs/style',
+  'home.hero.samples': 'Sample Lead Time',
+  'home.hero.samples.value': '7-10 days',
+  'home.hero.bulk': 'Bulk Lead Time',
+  'home.hero.bulk.value': '20-30 days',
   'home.hero.getquote': 'Get a Quote',
   'home.hero.lookbook': 'Download Lookbook',
-  'home.hero.b2b': 'We work with brands & bulk orders only. No retail / no personal customization.',
+  'home.hero.b2b': '* B2B only — No retail, designed for brands & wholesalers.',
+  'home.hero.cta.quote': 'Request a Quote',
+  'home.hero.cta.techpack': 'Send Tech Pack',
+  'home.hero.cta.template': 'Download Tech Pack Template',
   
   // HomePage Who We Are
   'home.whoweare.title': 'A Manufacturing Partner Built on Responsibility, Not Promises.',
@@ -86,6 +103,20 @@ const enTranslations: Record<string, string> = {
   'home.process.step4.desc': 'final inspection + shipment support',
   'home.process.cta': 'Start OEM Project',
   
+  // HomePage Proof Strip
+  'home.proof.area': 'Factory Area',
+  'home.proof.area.value': '3,000+ sqm',
+  'home.proof.lines': 'Production Lines',
+  'home.proof.lines.value': '8 lines',
+  'home.proof.capacity': 'Monthly Capacity',
+  'home.proof.capacity.value': '30,000–50,000 pcs',
+  'home.proof.countries': 'Markets Served',
+  'home.proof.countries.value': '15+ countries',
+  'home.proof.qc': 'QC Checkpoints',
+  'home.proof.qc.value': 'IQC / PQC / FQC',
+  'home.proof.delivery': 'Delivery Tracking',
+  'home.proof.delivery.value': 'On-time tracked per PO',
+  
   // HomePage Quality
   'home.quality.title': 'Quality Is a System, Not a Slogan.',
   'home.quality.sampling': 'Sampling Room',
@@ -105,15 +136,15 @@ const enTranslations: Record<string, string> = {
   
   // HomePage FAQ
   'home.faq.title': 'Frequently Asked Questions',
-  'home.faq.q1': 'What is your MOQ?',
-  'home.faq.a1': 'MOQ usually starts from 100–300 pcs per style, depending on fabric & complexity.',
-  'home.faq.q2': 'How long does sampling take?',
-  'home.faq.a2': '7–10 working days for standard samples.',
-  'home.faq.q3': 'Can you develop from photos?',
-  'home.faq.a3': 'Yes. Reference photos are acceptable. Tech packs are better for accuracy.',
-  'home.faq.q4': 'What about payment & shipping?',
-  'home.faq.a4': 'Flexible terms. Support EXW/FOB. Details discussed per order.',
-  'home.faq.whatsapp': 'Ask MOQ on WhatsApp',
+  'home.faq.q1': 'How is MOQ calculated — per style, per color, or per size?',
+  'home.faq.a1': 'MOQ is 50 pcs per style. You can split into multiple colors (min. 10 pcs/color) and sizes (no minimum per size). Example: 1 style × 3 colors × 5 sizes = 50 pcs total is acceptable.',
+  'home.faq.q2': 'What is the sampling process and fee? Can the sample fee be deducted?',
+  'home.faq.a2': 'Sample fee: $30–80/pc depending on complexity. Lead time: 7–10 days. Sample fee is fully refundable when bulk order is placed (min. 50 pcs/style). We provide proto sample + fitting sample if needed.',
+  'home.faq.q3': 'How long is the lead time for samples and bulk production?',
+  'home.faq.a3': 'Sample lead time: 7–10 working days after tech pack confirmation. Bulk production: 20–30 days after pre-production sample approval. Rush orders available with surcharge (discuss case by case).',
+  'home.faq.q4': 'What are your payment terms, QC process, and rework policy?',
+  'home.faq.a4': 'Payment: 30% deposit, 70% before shipment (T/T). QC: IQC (fabric) + PQC (inline) + FQC (final) with photo reports. Rework: Free rework if defect rate >3% due to our fault. Defective items replaced or credited.',
+  'home.faq.whatsapp': 'Ask Detailed Questions on WhatsApp',
   
   // HomePage Final CTA
   'home.cta.title': 'Ready to Start Your First Order?',
@@ -154,14 +185,96 @@ const enTranslations: Record<string, string> = {
   'custom.choose': 'Choose',
   
   // Footer
+  'footer.companyName': 'Dongguan Xikaixi Garment Co.,Ltd.',
+  'footer.description': "Professional OEM/ODM women's apparel manufacturer for growing fashion brands.",
+  'footer.address.full': '3rd Floor, No. 5 Pedestrian Street, Second Industrial Zone, Humen Town, Dongguan, Guangdong, China',
+  'footer.b2bOnly': 'B2B only / No retail',
+  'footer.categories': 'Categories',
   'footer.company': 'Company',
   'footer.products': 'Products',
   'footer.services': 'Services',
   'footer.contact.title': 'Contact',
-  'footer.copyright': '© 2025 Dongguan Xikaixi Garment Co.,Ltd. All rights reserved.',
+  'footer.whatsappLabel': 'WhatsApp: +86 186 9249 8415',
+  'footer.copyright': '© 2026 Dongguan Xikaixi Garment Co.,Ltd. All rights reserved.',
   'footer.address': 'Dongguan, Guangdong, China',
   'footer.email': 'Email',
   'footer.phone': 'Phone',
+
+  // WhatsApp Float
+  'whatsapp.title': 'Chat with our team',
+  'whatsapp.agent1.name': 'Jenny (Owner)',
+  'whatsapp.agent1.role': 'Sales Manager',
+  'whatsapp.agent1.note': 'MOQ / quote / categories / new projects',
+  'whatsapp.agent2.name': 'Jedd',
+  'whatsapp.agent2.role': 'Production Coordinator',
+  'whatsapp.agent2.note': 'timeline / production / shipment / bulk orders',
+  
+  // ContactPage
+  'contact.direct.title': 'Direct Contact',
+  'contact.email.label': 'Email',
+  'contact.whatsapp.label': 'WhatsApp',
+  'contact.address.label': 'Address',
+  'contact.hours.title': 'Business Hours',
+  'contact.hours.weekdays': 'Monday - Friday: 9:00 AM - 6:00 PM (GMT+8)',
+  'contact.hours.response': 'We typically respond within 24 hours on business days.',
+  'contact.quicklinks.title': 'Quick Links',
+  'contact.quicklinks.techpack': 'Download Tech Pack Template',
+  'contact.quicklinks.lookbook': 'Download Lookbook',
+  'contact.quicklinks.factory': 'View Factory & Quality',
+  'contact.before.title': 'Before You Contact Us',
+  'contact.before.q1': 'What information should I prepare?',
+  'contact.before.a1': 'Tech pack (if available), reference photos, quantity per style, target delivery date, and your quality expectations.',
+  'contact.before.q2': 'Do you work with startup brands?',
+  'contact.before.a2': 'Yes. Our MOQ starts from 100-300 pcs per style, suitable for emerging brands.',
+  'contact.before.q3': 'Can you develop from photos?',
+  'contact.before.a3': 'Yes, through our ODM service. Reference photos are acceptable, though tech packs are more precise.',
+  'contact.before.q4': 'What\'s your response time?',
+  'contact.before.a4': 'We respond within 24 hours with initial MOQ, timeline, and next steps.',
+  
+  // Contact Page - New
+  'contact.hero.title': 'Get Your Quote',
+  'contact.hero.subtitle': 'Response within 24 hours | Professional support | Trusted by 200+ brands',
+  'contact.info.title': 'Contact Information',
+  'contact.info.description': 'Fill out the form and our team will get back to you within 24 hours.',
+  'contact.info.email': 'Email',
+  'contact.info.phone': 'Phone / WhatsApp',
+  'contact.info.whatsapp': 'WhatsApp Chat',
+  'contact.info.address': 'Address',
+  'contact.hours.mon_fri': 'Monday - Friday',
+  'contact.hours.mon_fri_time': '9:00 - 18:00 CST',
+  'contact.hours.saturday': 'Saturday',
+  'contact.hours.saturday_time': '9:00 - 12:00 CST',
+  'contact.hours.sunday': 'Sunday',
+  'contact.hours.sunday_closed': 'Closed',
+  'contact.form.name': 'Your Name',
+  'contact.form.email': 'Email Address',
+  'contact.form.company': 'Company Name',
+  'contact.form.phone': 'Phone / WhatsApp',
+  'contact.form.message': 'Message',
+  'contact.form.files': 'Attach Files (Tech Pack, Reference Images, etc.)',
+  'contact.form.files_hint': 'Max 5 files, 10MB each. Supported: JPG, PNG, PDF',
+  'contact.form.files_selected': 'file(s) selected',
+  'contact.form.submit': 'Send Message',
+  'contact.form.submitting': 'Processing...',
+  'contact.form.success_title': 'Message sent successfully!',
+  'contact.form.success_message': 'We\'ll get back to you within 24 hours.',
+  'contact.form.error_title': 'Submission failed',
+  'contact.form.name_placeholder': 'John Doe',
+  'contact.form.email_placeholder': 'john@company.com',
+  'contact.form.company_placeholder': 'Your Company Ltd.',
+  'contact.form.phone_placeholder': '+1 234 567 8900',
+  'contact.form.message_placeholder': 'Tell us about your project requirements, MOQ, target price, etc.',
+  'contact.faq.title': 'Frequently Asked Questions',
+  'contact.faq.moq_q': 'What is your minimum order quantity (MOQ)?',
+  'contact.faq.moq_a': 'Our standard MOQ is 50 pieces per style. For special projects or first-time customers, we can discuss flexible MOQ options.',
+  'contact.faq.sampling_q': 'How long does sampling take?',
+  'contact.faq.sampling_a': 'Sample development typically takes 7-10 days after tech pack confirmation. Rush sampling (3-5 days) is available for urgent projects.',
+  'contact.faq.quote_q': 'What information do you need for a quote?',
+  'contact.faq.quote_a': 'We need: product design/tech pack, quantity, material preferences, target price, and delivery timeline. The more details you provide, the more accurate our quote will be.',
+  'contact.faq.packaging_q': 'Do you offer custom packaging and labeling?',
+  'contact.faq.packaging_a': 'Yes! We provide full customization including hang tags, care labels, custom packaging boxes, and poly bags with your branding.',
+
+  'header.resources.download': '(Download)',
 };
 
 export const translations: Record<LanguageCode, Record<string, string>> = {
@@ -169,6 +282,18 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
   
   ES: {
     ...enTranslations,
+    'about.hero.title': 'El equipo de fabricación detrás de colecciones fiables',
+    'about.hero.subtitle': 'Apoyamos a marcas de moda en crecimiento con producción estable y comunicación clara.',
+    'about.section1.title': 'Quiénes somos',
+    'about.section1.p1': 'Somos un fabricante profesional de ropa femenina en China que trabaja con marcas globales.',
+    'about.section1.p2': 'Nuestro equipo entiende tanto el diseño como la producción.',
+    'about.section2.title': 'Qué hacemos',
+    'about.section2.p1': 'Gestionamos todo el proceso desde el diseño hasta la producción a gran escala.',
+    'about.section2.p2': 'Nos enfocamos en calidad estable y tiempos de entrega realistas.',
+    'about.section3.title': 'Por qué las marcas nos eligen',
+    'about.section3.p1': 'Comunicación clara, MOQs flexibles y calidad constante.',
+    'about.section3.p2': 'Trabajamos como socios de fabricación a largo plazo.',
+
     'nav.home': 'Inicio',
     'nav.collections': 'Colecciones',
     'nav.factory': 'Fábrica y Calidad',
@@ -192,10 +317,23 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     'home.hero.getquote': 'Solicitar Cotización',
     'home.hero.lookbook': 'Descargar Catálogo',
     'collections.cta.button': 'Solicitar Cotización',
+
   },
   
   FR: {
     ...enTranslations,
+    'about.hero.title': 'L’équipe de fabrication derrière des collections fiables',
+'about.hero.subtitle': 'Nous aidons les marques de mode en croissance avec une production stable et une communication claire.',
+'about.section1.title': 'Qui sommes-nous',
+'about.section1.p1': 'Nous sommes un fabricant professionnel de vêtements pour femmes basé en Chine travaillant avec des marques mondiales.',
+'about.section1.p2': 'Notre équipe comprend à la fois le design et l’exécution de la production.',
+'about.section2.title': 'Ce que nous faisons',
+'about.section2.p1': 'Nous gérons tout le processus de fabrication du vêtement.',
+'about.section2.p2': 'Nous nous concentrons sur une qualité stable et des délais réalistes.',
+'about.section3.title': 'Pourquoi les marques nous choisissent',
+'about.section3.p1': 'Communication claire, MOQ flexibles et qualité constante.',
+'about.section3.p2': 'Nous travaillons comme partenaire de fabrication à long terme.',
+
     'nav.home': 'Accueil',
     'nav.collections': 'Collections',
     'nav.factory': 'Usine et Qualité',
@@ -223,6 +361,18 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
   
   DE: {
     ...enTranslations,
+    'about.hero.title': 'Das Fertigungsteam hinter zuverlässigen Kollektionen',
+'about.hero.subtitle': 'Wir unterstützen wachsende Modemarken mit stabiler Produktion und klarer Kommunikation.',
+'about.section1.title': 'Wer wir sind',
+'about.section1.p1': 'Wir sind ein professioneller Hersteller von Damenbekleidung in China.',
+'about.section1.p2': 'Unser Team versteht sowohl Design als auch Produktionsumsetzung.',
+'about.section2.title': 'Was wir tun',
+'about.section2.p1': 'Wir verwalten den gesamten Bekleidungsproduktionsprozess.',
+'about.section2.p2': 'Wir konzentrieren uns auf stabile Qualität und realistische Lieferzeiten.',
+'about.section3.title': 'Warum Marken uns wählen',
+'about.section3.p1': 'Klare Kommunikation, flexible MOQs und konstante Qualität.',
+'about.section3.p2': 'Wir arbeiten als langfristiger Produktionspartner.',
+
     'nav.home': 'Startseite',
     'nav.collections': 'Kollektionen',
     'nav.factory': 'Fabrik & Qualität',
@@ -250,6 +400,18 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
   
   PT: {
     ...enTranslations,
+    'about.hero.title': 'A equipe de fabricação por trás de coleções confiáveis',
+'about.hero.subtitle': 'Apoiamos marcas de moda em crescimento com produção estável.',
+'about.section1.title': 'Quem somos',
+'about.section1.p1': 'Somos um fabricante profissional de vestuário feminino na China.',
+'about.section1.p2': 'Nossa equipe entende design e execução de produção.',
+'about.section2.title': 'O que fazemos',
+'about.section2.p1': 'Gerenciamos todo o processo de fabricação de roupas.',
+'about.section2.p2': 'Focamos em qualidade estável e prazos realistas.',
+'about.section3.title': 'Por que as marcas nos escolhem',
+'about.section3.p1': 'Comunicação clara, MOQs flexíveis e qualidade consistente.',
+'about.section3.p2': 'Trabalhamos como parceiro de fabricação de longo prazo.',
+
     'nav.home': 'Início',
     'nav.collections': 'Coleções',
     'nav.factory': 'Fábrica e Qualidade',
@@ -277,6 +439,18 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
   
   IT: {
     ...enTranslations,
+    'about.hero.title': 'Il team di produzione dietro collezioni affidabili',
+'about.hero.subtitle': 'Supportiamo i marchi di moda in crescita con produzione stabile.',
+'about.section1.title': 'Chi siamo',
+'about.section1.p1': 'Siamo un produttore professionale di abbigliamento femminile in Cina.',
+'about.section1.p2': 'Il nostro team comprende design ed esecuzione della produzione.',
+'about.section2.title': 'Cosa facciamo',
+'about.section2.p1': 'Gestiamo l’intero processo di produzione dei capi.',
+'about.section2.p2': 'Ci concentriamo su qualità stabile e tempi realistici.',
+'about.section3.title': 'Perché i marchi ci scelgono',
+'about.section3.p1': 'Comunicazione chiara, MOQs flessibili e qualità costante.',
+'about.section3.p2': 'Lavoriamo come partner di produzione a lungo termine.',
+
     'nav.home': 'Home',
     'nav.collections': 'Collezioni',
     'nav.factory': 'Fabbrica e Qualità',
@@ -304,6 +478,18 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
   
   RU: {
     ...enTranslations,
+    'about.hero.title': 'Команда производства надёжных коллекций',
+'about.hero.subtitle': 'Мы поддерживаем растущие модные бренды стабильным производством.',
+'about.section1.title': 'Кто мы',
+'about.section1.p1': 'Мы профессиональный производитель женской одежды в Китае.',
+'about.section1.p2': 'Наша команда понимает как дизайн, так и производство.',
+'about.section2.title': 'Что мы делаем',
+'about.section2.p1': 'Мы управляем всем процессом производства одежды.',
+'about.section2.p2': 'Мы сосредоточены на стабильном качестве и реальных сроках.',
+'about.section3.title': 'Почему бренды выбирают нас',
+'about.section3.p1': 'Чёткая коммуникация, гибкие MOQ и стабильное качество.',
+'about.section3.p2': 'Мы работаем как долгосрочный производственный партнёр.',
+
     'nav.home': 'Главная',
     'nav.collections': 'Коллекции',
     'nav.factory': 'Фабрика и качество',
@@ -331,6 +517,18 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
   
   AR: {
     ...enTranslations,
+    'about.hero.title': 'فريق التصنيع وراء مجموعات موثوقة',
+    'about.hero.subtitle': 'ندعم العلامات التجارية الناشئة بإنتاج مستقر وتواصل واضح.',
+    'about.section1.title': 'من نحن',
+    'about.section1.p1': 'نحن مصنع ملابس نسائية محترف في الصين يعمل مع علامات تجارية عالمية.',
+    'about.section1.p2': 'فريقنا يفهم التصميم وتنفيذ الإنتاج معًا.',
+    'about.section2.title': 'ماذا نفعل',
+    'about.section2.p1': 'ندير عملية التصنيع من العينة حتى الإنتاج بالجملة.',
+    'about.section2.p2': 'نركز على الجودة المستقرة ومواعيد التسليم الواقعية.',
+    'about.section3.title': 'لماذا تختارنا العلامات التجارية',
+    'about.section3.p1': 'تواصل واضح، كميات طلب مرنة، وجودة ثابتة.',
+    'about.section3.p2': 'نعمل كشريك تصنيع طويل الأمد.',
+
     // Header
     'nav.home': 'الرئيسية',
     'nav.collections': 'المجموعات',
@@ -370,7 +568,7 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     'home.hero.title': 'مصنع OEM/ODM لملابس النساء للعلامات التجارية للأزياء النامية',
     'home.hero.subtitle': 'من الحزمة الفنية إلى الإنتاج بالجملة - جودة مستقرة، جداول زمنية واقعية، وتواصل واضح.',
     'home.hero.moq': 'الحد الأدنى للطلب:',
-    'home.hero.moq.value': 'من 100-300 قطعة/تصميم',
+    'home.hero.moq.value': 'من 50 قطعة/تصميم',
     'home.hero.samples': 'العينات:',
     'home.hero.samples.value': '7-10 أيام عمل',
     'home.hero.bulk': 'مدة الإنتاج بالجملة:',
@@ -378,6 +576,9 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     'home.hero.getquote': 'طلب عرض سعر',
     'home.hero.lookbook': 'تحميل الكتالوج',
     'home.hero.b2b': 'نعمل فقط مع العلامات التجارية والطلبات بالجملة. لا نبيع بالتجزئة / لا تخصيص شخصي.',
+    'home.hero.cta.quote': 'طلب عرض سعر',
+    'home.hero.cta.techpack': 'إرسال الحزمة الفنية',
+    'home.hero.cta.template': 'تحميل قالب الحزمة الفنية',
     
     // HomePage Who We Are
     'home.whoweare.title': 'شريك تصنيع قائم على المسؤولية، وليس الوعود.',
@@ -416,6 +617,20 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     'home.process.step4.desc': 'فحص نهائي + دعم الشحن',
     'home.process.cta': 'ابدأ مشروع التصنيع',
     
+    // HomePage Proof Strip
+    'home.proof.area': 'منطقة المصنع',
+    'home.proof.area.value': '3,000+ متر مربع',
+    'home.proof.lines': 'خطوط الإنتاج',
+    'home.proof.lines.value': '8 خطوط',
+    'home.proof.capacity': 'السعة الشهرية',
+    'home.proof.capacity.value': '30,000–50,000 قطعة',
+    'home.proof.countries': 'الأسواق المستهدفة',
+    'home.proof.countries.value': '15+ دولة',
+    'home.proof.qc': 'نقاط مراقبة الجودة',
+    'home.proof.qc.value': 'IQC / PQC / FQC',
+    'home.proof.delivery': 'تتبع التسليم',
+    'home.proof.delivery.value': 'متبعة على الوقت لكل طلب',
+    
     // HomePage Quality
     'home.quality.title': 'الجودة نظام، وليست شعاراً.',
     'home.quality.sampling': 'غرفة العينات',
@@ -435,15 +650,15 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     
     // HomePage FAQ
     'home.faq.title': 'الأسئلة الشائعة',
-    'home.faq.q1': 'ما هو الحد الأدنى للطلب؟',
-    'home.faq.a1': 'عادةً يبدأ الحد الأدنى للطلب من 100-300 قطعة لكل تصميم، حسب القماش والتعقيد.',
-    'home.faq.q2': 'كم من الوقت تستغرق العينات؟',
-    'home.faq.a2': '7-10 أيام عمل للعينات القياسية.',
-    'home.faq.q3': 'هل يمكنكم التطوير من الصور؟',
-    'home.faq.a3': 'نعم. الصور المرجعية مقبولة. الحزم الفنية أفضل للدقة.',
-    'home.faq.q4': 'ماذا عن الدفع والشحن؟',
-    'home.faq.a4': 'شروط مرنة. ندعم EXW/FOB. يتم مناقشة التفاصيل لكل طلب.',
-    'home.faq.whatsapp': 'اسأل عن الحد الأدنى عبر واتساب',
+    'home.faq.q1': 'كيف يتم حساب الحد الأدنى للطلب — لكل تصميم، لون، أو حجم؟',
+    'home.faq.a1': 'الحد الأدنى للطلب هو 50 قطعة لكل تصميم. يمكنك تقسيمها إلى ألوان متعددة (الحد الأدنى لكل لون هو 10 قطعة) وأحجام (لا يوجد حد أدنى لكل حجم). مثال: 1 تصميم × 3 ألوان × 5 أحجام = 50 قطعة إجمالية مقبولة.',
+    'home.faq.q2': 'ما هو عملية العينات والرسوم المرتبطة بها؟ هل يمكن خصم رسوم العينات؟',
+    'home.faq.a2': 'رسوم العينات: $30–80/قطعة اعتمادًا على التعقيد. وقت الاستجابة: 7–10 أيام عمل. يتم استرداد رسوم العينات بالكامل عند تقديم طلب إنتاج بالجملة (الحد الأدنى لكل تصميم هو 50 قطعة). نقدم عينة أولية + عينة تجربة إذا لزم الأمر.',
+    'home.faq.q3': 'كم من الوقت يستغرقه إنتاج العينات والإنتاج بالجملة؟',
+    'home.faq.a3': 'وقت استجابة العينات: 7–10 أيام عمل بعد تأكيد الحزمة الفنية. إنتاج بالجملة: 20–30 يومًا بعد موافقة عينة الإنتاج قبل الإنتاج. الطلبات السريعة متاحة مع رسوم إضافية (مناقشة حالة بحالة).',
+    'home.faq.q4': 'ما هي شروط الدفع، عملية التحكم في الجودة، وسياسة إعادة العمل؟',
+    'home.faq.a4': 'الدفع: 30% مقدم، 70% قبل الشحن (تحويل بنكي). التحكم في الجودة: IQC (القطعة الخام) + PQC (خلال الإنتاج) + FQC (النهاية) مع تقارير صور. إعادة العمل: إعادة العمل مجانًا إذا كانت نسبة العيوب أكثر من 3% بسبب خطأنا. يتم استبدال أو تخصيص العناص العاطلة.',
+    'home.faq.whatsapp': 'أسأل عن الأسئلة التفصيلية عبر واتساب',
     
     // HomePage Final CTA
     'home.cta.title': 'هل أنت مستعد لبدء طلبك الأول؟',
@@ -464,6 +679,18 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
   
   TR: {
     ...enTranslations,
+    'about.hero.title': 'Güvenilir koleksiyonların arkasındaki üretim ekibi',
+'about.hero.subtitle': 'Büyünen moda markalarını istikrarlı üretimle destekliyoruz.',
+'about.section1.title': 'Biz kimiz',
+'about.section1.p1': 'Çin merkezli profesyonel kadın giyim üreticisiyiz.',
+'about.section1.p2': 'Ekibimiz tasarım ve üretim süreçlerini iyi anlar.',
+'about.section2.title': 'Ne yapıyoruz',
+'about.section2.p1': 'Tüm üretim sürecini yönetiyoruz.',
+'about.section2.p2': 'İstikrarlı kalite ve gerçekçi teslim sürelerine odaklanıyoruz.',
+'about.section3.title': 'Markalar neden bizi seçiyor',
+'about.section3.p1': 'Açık iletişim, esnek MOQ ve tutarlı kalite.',
+'about.section3.p2': 'Uzun vadeli üretim ortağı olarak çalışıyoruz.',
+
     'nav.home': 'Ana Sayfa',
     'nav.collections': 'Koleksiyonlar',
     'nav.factory': 'Fabrika ve Kalite',
@@ -483,7 +710,7 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     'nav.dropdown.process': 'Süreç',
     'nav.dropdown.techpack': 'Tech Pack Şablonu',
     'nav.dropdown.download': '(İndir)',
-    'home.hero.title': 'Büyüyen moda markaları için OEM/ODM kadın giyim üreticisi',
+    'home.hero.title': 'Büyünen moda markaları için OEM/ODM kadın giyim üreticisi',
     'home.hero.getquote': 'Teklif Al',
     'home.hero.lookbook': 'Kataloğu İndir',
     'collections.cta.button': 'Teklif Al',
@@ -491,6 +718,18 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
   
   JA: {
     ...enTranslations,
+    'about.hero.title': '信頼できるコレクションを支える製造チーム',
+'about.hero.subtitle': '成長するファッションブランドを安定した生産で支援します。',
+'about.section1.title': '私たちについて',
+'about.section1.p1': '私たちは中国に拠点を置く婦人服専門メーカーです。',
+'about.section1.p2': '当社チームはデザインと生産の両方を理解しています。',
+'about.section2.title': '私たちの業務',
+'about.section2.p1': 'サンプルから量産まで全工程を管理します。',
+'about.section2.p2': '安定した品質と現実的な納期を重視しています。',
+'about.section3.title': '選ばれる理由',
+'about.section3.p1': '明確なコミュニケーション、柔軟なMOQ、安定した品質。',
+'about.section3.p2': '長期的な製造パートナーとして協力します。',
+
     'nav.home': 'ホーム',
     'nav.collections': 'コレクション',
     'nav.factory': '工場と品質',

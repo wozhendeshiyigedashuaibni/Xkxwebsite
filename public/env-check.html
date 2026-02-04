@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Environment Check</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 { color: #333; margin-top: 0; }
+    .status { padding: 15px; border-radius: 5px; margin: 15px 0; }
+    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+    code {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    .variable {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .variable:last-child { border-bottom: none; }
+    .value { font-weight: bold; color: #0066cc; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🔍 Environment Configuration Check</h1>
+    
+    <div class="status info">
+      <strong>Current Configuration:</strong>
+    </div>
+
+    <div class="variable">
+      <span>VITE_USE_MOCK:</span>
+      <span class="value" id="useMock">-</span>
+    </div>
+    
+    <div class="variable">
+      <span>VITE_API_URL:</span>
+      <span class="value" id="apiUrl">-</span>
+    </div>
+    
+    <div class="variable">
+      <span>Mode:</span>
+      <span class="value" id="mode">-</span>
+    </div>
+
+    <div class="variable">
+      <span>Computed USE_MOCK_DATA:</span>
+      <span class="value" id="computed">-</span>
+    </div>
+
+    <div id="result" class="status"></div>
+
+    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+      <strong>How to configure:</strong>
+      <ol>
+        <li>Create or edit <code>.env.local</code> in project root</li>
+        <li>Set <code>VITE_USE_MOCK=false</code> to use real backend</li>
+        <li>Set <code>VITE_USE_MOCK=true</code> to use mock data (default)</li>
+        <li>Restart <code>npm run dev</code> after changing</li>
+      </ol>
+    </div>
+  </div>
+
+  <script type="module">
+    // Get environment variables (only VITE_ prefixed are exposed)
+    const useMock = import.meta.env.VITE_USE_MOCK;
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const mode = import.meta.env.MODE;
+    
+    // Compute the actual value used by the app
+    const computedUseMock = import.meta.env.VITE_USE_MOCK !== 'false';
+
+    // Display values
+    document.getElementById('useMock').textContent = useMock !== undefined ? useMock : 'undefined (will default to true)';
+    document.getElementById('apiUrl').textContent = apiUrl || '/api (default)';
+    document.getElementById('mode').textContent = mode;
+    document.getElementById('computed').textContent = computedUseMock ? 'true (using mock data)' : 'false (using real backend)';
+
+    // Show result
+    const resultDiv = document.getElementById('result');
+    if (computedUseMock) {
+      resultDiv.className = 'status success';
+      resultDiv.innerHTML = `
+        <strong>✅ Mock Mode Active</strong><br>
+        The application will use mock data. No backend server required.<br>
+        You should see a yellow banner in the app indicating development mode.
+      `;
+    } else {
+      resultDiv.className = 'status warning';
+      resultDiv.innerHTML = `
+        <strong>⚠️ Real Backend Mode</strong><br>
+        The application expects a backend server on port 3001.<br>
+        Make sure to run: <code>npm run server</code>
+      `;
+    }
+  </script>
+</body>
+</html>

@@ -1,10 +1,8 @@
-import { Download, ArrowRight, CheckCircle } from 'lucide-react';
+import { useNavigation } from '@/hooks/useNavigation';
 
-interface OemOdmPageProps {
-  onNavigate: (page: string) => void;
-}
+export function OemOdmPage() {
+  const onNavigate = useNavigation();
 
-export function OemOdmPage({ onNavigate }: OemOdmPageProps) {
   return (
     <div className="flex flex-col">
       {/* Header */}

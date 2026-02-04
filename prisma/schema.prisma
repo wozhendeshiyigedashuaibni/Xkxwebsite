@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id                Int      @id @default(autoincrement())
+  slug              String   @unique
+  title             String
+  category          String
+  subcategory       String?
+  mainImage         String
+  images            String   // JSON array
+  description       String
+  moq               String
+  sampleLeadTime    String
+  bulkLeadTime      String
+  material          String
+  process           String
+  capacity          String
+  packaging         String
+  customOptions     String   // JSON array
+  tags              String   // JSON array
+  price             String?
+  featured          Boolean  @default(false)
+  active            Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Content {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String   // JSON
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Lead {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  company   String?
+  phone     String?
+  message   String
+  files     String?  // JSON array
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

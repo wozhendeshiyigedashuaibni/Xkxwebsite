@@ -1,11 +1,8 @@
-import { Factory, ClipboardCheck, Layers, Package } from 'lucide-react';
-import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
+import { useNavigation } from '@/hooks/useNavigation';
 
-interface FactoryPageProps {
-  onNavigate: (page: string) => void;
-}
+export function FactoryPage() {
+  const onNavigate = useNavigation();
 
-export function FactoryPage({ onNavigate }: FactoryPageProps) {
   return (
     <div className="flex flex-col">
       {/* Header */}

@@ -1,81 +1,87 @@
 import {
-  CheckCircle,
   ArrowRight,
-  Download,
   Package,
   Clock,
   Users,
+  FileText,
+  Send,
+  Download,
+  CheckCircle,
 } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useNavigation } from "@/hooks/useNavigation";
+import { useSEO } from "@/hooks/useSEO";
+import { CONTACT_CONFIG } from "@/config/contact";
+import { HOME_IMAGES } from "@/config/images";
 
-interface HomePageProps {
-  onNavigate: (page: string, params?: any) => void;
-}
-
-export function HomePage({ onNavigate }: HomePageProps) {
+export function HomePage() {
   const { t } = useTranslation();
+  const onNavigate = useNavigation();
+  
+  // 自动设置SEO
+  useSEO();
 
   const categories = [
     {
       title: t("category.dresses"),
       slug: "dresses",
+      categoryName: "Dresses",
       tags: [
         t("home.categories.dresses.tag1"),
         t("home.categories.dresses.tag2"),
       ],
-      image:
-        "https://images.unsplash.com/photo-1720005398225-4ea01c9d2b8f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21lbiUyMGRyZXNzJTIwZWxlZ2FudCUyMGZhc2hpb258ZW58MXx8fHwxNzcwMTAxODc0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      image: HOME_IMAGES.categoryDress,
     },
     {
       title: t("category.womensets"),
       slug: "womensets",
+      categoryName: "Women Sets",
       tags: [
         t("home.categories.sets.tag1"),
         t("home.categories.sets.tag2"),
       ],
-      image:
-        "https://images.unsplash.com/photo-1768460608433-d3af5148832c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjB3b21lbiUyMGFwcGFyZWwlMjBzdHVkaW98ZW58MXx8fHwxNzcwMTAxODc0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      image: HOME_IMAGES.categoryCoordSet,
     },
     {
       title: t("category.skirts"),
       slug: "skirts",
+      categoryName: "Skirts",
       tags: [
         t("home.categories.skirts.tag1"),
         t("home.categories.skirts.tag2"),
       ],
-      image:
-        "https://images.unsplash.com/photo-1592423777039-7be9f340582b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21lbiUyMHNraXJ0JTIwb3V0Zml0fGVufDF8fHx8MTc3MDEwMTg3NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      image: HOME_IMAGES.categorySkirt,
     },
     {
       title: t("category.hoodies"),
       slug: "hoodies",
+      categoryName: "Hoodies",
       tags: [
         t("home.categories.hoodies.tag1"),
         t("home.categories.hoodies.tag2"),
       ],
-      image:
-        "https://images.unsplash.com/photo-1760126130338-4e6c9043ee2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwaG9vZGllJTIwc3RyZWV0d2VhcnxlbnwxfHx8fDE3NzAxMDE4NzV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      image: HOME_IMAGES.categoryHoodie,
     },
     {
       title: t("category.tshirts"),
       slug: "tshirts",
+      categoryName: "T-Shirts",
       tags: [
         t("home.categories.tshirts.tag1"),
         t("home.categories.tshirts.tag2"),
       ],
-      image:
-        "https://images.unsplash.com/photo-1768460608433-d3af5148832c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjB3b21lbiUyMGFwcGFyZWwlMjBzdHVkaW98ZW58MXx8fHwxNzcwMTAxODc0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      image: HOME_IMAGES.categoryTshirt,
     },
     {
       title: t("category.denim"),
       slug: "denim",
+      categoryName: "Denim & Bottoms",
       tags: [
         t("home.categories.denim.tag1"),
         t("home.categories.denim.tag2"),
       ],
-      image:
-        "https://images.unsplash.com/photo-1592423777039-7be9f340582b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21lbiUyMHNraXJ0JTIwb3V0Zml0fGVufDF8fHx8MTc3MDEwMTg3NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      image: HOME_IMAGES.categoryJeans,
     },
   ];
 
@@ -85,7 +91,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
       <section className="relative min-h-[600px] flex items-center bg-gray-100">
         <div className="absolute inset-0">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1768460608433-d3af5148832c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjB3b21lbiUyMGFwcGFyZWwlMjBzdHVkaW98ZW58MXx8fHwxNzcwMTAxODc0fDA&ixlib=rb-4.1.0&q=80&w=1080"
+            src={HOME_IMAGES.heroModel}
             alt="Fashion model"
             className="w-full h-full object-cover opacity-20"
           />
@@ -126,19 +132,34 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4 mb-6">
+              {/* Primary CTA: Request a Quote */}
               <button
                 onClick={() => onNavigate("contact")}
-                className="px-8 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
+                className="px-8 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors flex items-center gap-2"
               >
-                {t("home.hero.getquote")}
+                <FileText className="w-4 h-4" />
+                {t("home.hero.cta.quote")}
               </button>
+              
+              {/* Secondary CTA: Send Tech Pack via WhatsApp */}
               <a
-                href="/assets/lookbook.pdf"
-                download
+                href={`${CONTACT_CONFIG.whatsapp.url}?text=Hi, I'd like to send you a tech pack for quotation.`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="px-8 py-3 border border-black rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2"
               >
+                <Send className="w-4 h-4" />
+                {t("home.hero.cta.techpack")}
+              </a>
+              
+              {/* Tertiary CTA: Download Tech Pack Template */}
+              <a
+                href="/assets/tech-pack-template.pdf"
+                download
+                className="px-8 py-3 border border-gray-400 text-gray-700 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2"
+              >
                 <Download className="w-4 h-4" />
-                {t("home.hero.lookbook")}
+                {t("home.hero.cta.template")}
               </a>
             </div>
 
@@ -203,7 +224,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 className="group relative overflow-hidden rounded-lg bg-white shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
                 onClick={() =>
                   onNavigate("collections", {
-                    category: category.slug,
+                    category: category.categoryName,
                   })
                 }
               >
@@ -288,6 +309,49 @@ export function HomePage({ onNavigate }: HomePageProps) {
         </div>
       </section>
 
+      {/* Proof Strip Section */}
+      <section className="py-16 bg-gray-50 border-y border-gray-200">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-6xl mx-auto">
+            {[
+              {
+                label: t("home.proof.area"),
+                value: t("home.proof.area.value"),
+              },
+              {
+                label: t("home.proof.lines"),
+                value: t("home.proof.lines.value"),
+              },
+              {
+                label: t("home.proof.capacity"),
+                value: t("home.proof.capacity.value"),
+              },
+              {
+                label: t("home.proof.countries"),
+                value: t("home.proof.countries.value"),
+              },
+              {
+                label: t("home.proof.qc"),
+                value: t("home.proof.qc.value"),
+              },
+              {
+                label: t("home.proof.delivery"),
+                value: t("home.proof.delivery.value"),
+              },
+            ].map((item, index) => (
+              <div key={index} className="text-center">
+                <div className="text-xl md:text-2xl font-bold mb-1">
+                  {item.value}
+                </div>
+                <div className="text-xs md:text-sm text-gray-600">
+                  {item.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Quality System Section */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -299,28 +363,41 @@ export function HomePage({ onNavigate }: HomePageProps) {
               {
                 title: t("home.quality.sampling"),
                 subtitle: t("home.quality.sampling.subtitle"),
+                image: HOME_IMAGES.qualitySampling,
               },
               {
                 title: t("home.quality.production"),
                 subtitle: t("home.quality.production.subtitle"),
+                image: HOME_IMAGES.qualityProduction,
               },
               {
                 title: t("home.quality.qc"),
                 subtitle: t("home.quality.qc.subtitle"),
+                image: HOME_IMAGES.qualityQC,
               },
               {
                 title: t("home.quality.packing"),
                 subtitle: t("home.quality.packing.subtitle"),
+                image: HOME_IMAGES.qualityPacking,
               },
             ].map((item, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-lg text-center hover:shadow-md transition-shadow"
+                className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
               >
-                <h3 className="mb-2">{item.title}</h3>
-                <p className="text-sm text-gray-600">
-                  ({item.subtitle})
-                </p>
+                <div className="aspect-[4/3] overflow-hidden">
+                  <ImageWithFallback
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-6 text-center">
+                  <h3 className="mb-2">{item.title}</h3>
+                  <p className="text-sm text-gray-600">
+                    {item.subtitle}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -377,7 +454,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           </div>
           <div className="text-center mt-10">
             <a
-              href="https://wa.me/8618692498415"
+              href={CONTACT_CONFIG.whatsapp.url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block px-8 py-3 border border-black rounded-md hover:bg-gray-50 transition-colors"
@@ -405,7 +482,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               {t("home.cta.quote")}
             </button>
             <a
-              href="https://wa.me/8618692498415"
+              href={CONTACT_CONFIG.whatsapp.url}
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-3 border border-white rounded-md hover:bg-white hover:text-black transition-colors"
