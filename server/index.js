@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './prisma.js';
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
 import contentRoutes from './routes/content.js';
@@ -16,13 +16,7 @@ dotenv.config({ path: '../.env' });
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
-const prisma = new PrismaClient({
-  log: ['error', 'warn'],
-});
 const PORT = process.env.PORT || 3001;
-
-// Export prisma for use in routes
-export { prisma };
 
 // Test database connection on startup
 async function testDatabaseConnection() {
@@ -77,13 +71,15 @@ app.get('/api/health', async (req, res) => {
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Shutting down gracefully...');
+  console.log('
+🛑 Shutting down gracefully...');
   await prisma.$disconnect();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n🛑 Shutting down gracefully...');
+  console.log('
+🛑 Shutting down gracefully...');
   await prisma.$disconnect();
   process.exit(0);
 });
