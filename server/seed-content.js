@@ -4,13 +4,7 @@
  * 运行: node server/seed-content.js
  */
 
-import { PrismaClient } from '@prisma/client';
-import dotenv from 'dotenv';
-
-// Load environment variables
-dotenv.config({ path: '../.env' });
-
-const prisma = new PrismaClient();
+import { prisma } from './prisma.js';
 
 const contentData = [
   // ========== 首页内容 ==========

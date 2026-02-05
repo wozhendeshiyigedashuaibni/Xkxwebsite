@@ -1,5 +1,6 @@
 import express from 'express';
 import { prisma } from '../prisma.js';
+import { formatProduct, formatProducts } from '../utils/formatters.js';
 
 const router = express.Router();
 
@@ -16,14 +17,7 @@ router.get('/', async (req, res) => {
       orderBy: { createdAt: 'desc' }
     });
 
-    const formatted = products.map(p => ({
-      ...p,
-      images: JSON.parse(p.images || '[]'),
-      customOptions: JSON.parse(p.customOptions || '[]'),
-      tags: JSON.parse(p.tags || '[]')
-    }));
-
-    res.json(formatted);
+    res.json(formatProducts(products));
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
@@ -47,14 +41,7 @@ router.get('/:identifier', async (req, res) => {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    const formatted = {
-      ...product,
-      images: JSON.parse(product.images || '[]'),
-      customOptions: JSON.parse(product.customOptions || '[]'),
-      tags: JSON.parse(product.tags || '[]')
-    };
-
-    res.json(formatted);
+    res.json(formatProduct(product));
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
