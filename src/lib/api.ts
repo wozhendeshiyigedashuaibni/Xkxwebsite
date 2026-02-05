@@ -5,8 +5,9 @@
 
 import { getMockProducts, getMockProduct } from './mockData';
 import { API_BASE_URL } from '../config/api';
-// Default to true if not explicitly set to 'false'
-const USE_MOCK_DATA = false;
+
+// Use mock data as fallback when API fails
+const ENABLE_MOCK_FALLBACK = true;
 
 interface ApiError {
   error: string;
@@ -91,24 +92,27 @@ class ApiClient {
 
   // ========== PRODUCTS ==========
   async getProducts(params?: { category?: string; featured?: boolean }) {
-    // Use mock data if enabled or if backend fails
-    if (USE_MOCK_DATA) {
-      console.log('Using mock data (VITE_USE_MOCK=true)');
-      return Promise.resolve(getMockProducts(params));
-    }
-
     try {
       const query = new URLSearchParams();
       if (params?.category) query.append('category', params.category);
       if (params?.featured) query.append('featured', 'true');
 
       const queryString = query.toString();
-      return await this.request<Product[]>(
+      const products = await this.request<Product[]>(
         `/products${queryString ? `?${queryString}` : ''}`
       );
+
+      // If API returns empty array and fallback is enabled, use mock data
+      if (products.length === 0 && ENABLE_MOCK_FALLBACK) {
+        console.log('No products in database, using mock data');
+        return getMockProducts(params);
+      }
+
+      return products;
     } catch (error) {
-      if (error instanceof Error && error.message === 'BACKEND_NOT_RUNNING') {
-        console.log('Falling back to mock data');
+      // Fallback to mock data on any error
+      if (ENABLE_MOCK_FALLBACK) {
+        console.log('API error, falling back to mock data:', error);
         return getMockProducts(params);
       }
       throw error;
@@ -116,21 +120,12 @@ class ApiClient {
   }
 
   async getProduct(identifier: string | number) {
-    // Use mock data if enabled or if backend fails
-    if (USE_MOCK_DATA) {
-      console.log('Using mock data (VITE_USE_MOCK=true)');
-      const product = getMockProduct(identifier);
-      if (!product) {
-        throw new Error('Product not found');
-      }
-      return Promise.resolve(product);
-    }
-
     try {
       return await this.request<Product>(`/products/${identifier}`);
     } catch (error) {
-      if (error instanceof Error && error.message === 'BACKEND_NOT_RUNNING') {
-        console.log('Falling back to mock data');
+      // Fallback to mock data on any error
+      if (ENABLE_MOCK_FALLBACK) {
+        console.log('API error, falling back to mock data:', error);
         const product = getMockProduct(identifier);
         if (!product) {
           throw new Error('Product not found');
