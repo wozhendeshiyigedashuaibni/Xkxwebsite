@@ -35,13 +35,13 @@ interface ProductForm {
 
 const defaultForm: ProductForm = {
   title: '',
-  category: 'Dresses',
+  category: '连衣裙',
   subcategory: '',
   mainImage: '/placeholder.jpg',
   description: '',
-  moq: '50 pcs',
-  sampleLeadTime: '7-10 days',
-  bulkLeadTime: '4-6 weeks',
+  moq: '50件起订',
+  sampleLeadTime: '7-10天',
+  bulkLeadTime: '4-6周',
   material: '',
   process: '',
   capacity: '',
@@ -51,7 +51,7 @@ const defaultForm: ProductForm = {
   active: true,
 };
 
-const categories = ['Dresses', 'Tops', 'Pants', 'Skirts', 'Outerwear', 'Hoodies', 'Activewear', 'Swimwear'];
+const categories = ['连衣裙', '上衣', '裤装', '裙装', '外套', '卫衣', '运动装', '泳装'];
 
 export default function Dashboard() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -91,12 +91,12 @@ export default function Dashboard() {
         return;
       }
 
-      if (!response.ok) throw new Error('Failed to fetch products');
+      if (!response.ok) throw new Error('获取产品列表失败');
 
       const data = await response.json();
       setProducts(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load products');
+      setError(err instanceof Error ? err.message : '加载失败');
     } finally {
       setLoading(false);
     }
@@ -134,16 +134,16 @@ export default function Dashboard() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to save product');
+        throw new Error(data.error || '保存失败');
       }
 
-      setSuccess(editingId ? 'Product updated!' : 'Product created!');
+      setSuccess(editingId ? '产品更新成功！' : '产品创建成功！');
       setShowForm(false);
       setEditingId(null);
       setForm(defaultForm);
       fetchProducts();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save product');
+      setError(err instanceof Error ? err.message : '保存失败');
     } finally {
       setSaving(false);
     }
@@ -157,8 +157,8 @@ export default function Dashboard() {
       mainImage: product.mainImage,
       description: '',
       moq: product.moq,
-      sampleLeadTime: '7-10 days',
-      bulkLeadTime: '4-6 weeks',
+      sampleLeadTime: '7-10天',
+      bulkLeadTime: '4-6周',
       material: '',
       process: '',
       capacity: '',
@@ -191,17 +191,17 @@ export default function Dashboard() {
         return;
       }
 
-      if (!response.ok) throw new Error('Failed to update product');
+      if (!response.ok) throw new Error('操作失败');
 
-      setSuccess(`Product ${product.active ? 'deactivated' : 'activated'}!`);
+      setSuccess(product.active ? '产品已下架' : '产品已上架');
       fetchProducts();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update product');
+      setError(err instanceof Error ? err.message : '操作失败');
     }
   };
 
   const handleDelete = async (product: Product) => {
-    if (!confirm(`Delete "${product.title}"? This cannot be undone.`)) return;
+    if (!confirm(`确定要删除「${product.title}」吗？此操作不可撤销。`)) return;
     
     const token = getToken();
     if (!token) return;
@@ -218,12 +218,12 @@ export default function Dashboard() {
         return;
       }
 
-      if (!response.ok) throw new Error('Failed to delete product');
+      if (!response.ok) throw new Error('删除失败');
 
-      setSuccess('Product deleted!');
+      setSuccess('产品已删除');
       fetchProducts();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete product');
+      setError(err instanceof Error ? err.message : '删除失败');
     }
   };
 
@@ -235,7 +235,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+        <p>加载中...</p>
       </div>
     );
   }
@@ -244,16 +244,16 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+          <h1 className="text-2xl font-bold">后台管理</h1>
           <div className="flex gap-4">
             <button
               onClick={() => navigate('/admin/password')}
               className="text-gray-600 hover:text-gray-800"
             >
-              Change Password
+              修改密码
             </button>
             <button onClick={handleLogout} className="text-red-600 hover:text-red-800">
-              Logout
+              退出登录
             </button>
           </div>
         </div>
@@ -275,31 +275,32 @@ export default function Dashboard() {
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Products ({products.length})</h2>
+            <h2 className="text-xl font-semibold">产品管理（共 {products.length} 个）</h2>
             <button
               onClick={() => { setShowForm(true); setEditingId(null); setForm(defaultForm); }}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
-              + Add Product
+              + 添加产品
             </button>
           </div>
 
           {showForm && (
             <form onSubmit={handleSubmit} className="mb-6 p-4 bg-gray-50 rounded">
-              <h3 className="font-semibold mb-4">{editingId ? 'Edit Product' : 'New Product'}</h3>
+              <h3 className="font-semibold mb-4">{editingId ? '编辑产品' : '新建产品'}</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Title *</label>
+                  <label className="block text-sm font-medium mb-1">产品名称 *</label>
                   <input
                     type="text"
                     value={form.title}
                     onChange={e => setForm({ ...form, title: e.target.value })}
                     className="w-full border rounded px-3 py-2"
+                    placeholder="请输入产品名称"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Category *</label>
+                  <label className="block text-sm font-medium mb-1">品类 *</label>
                   <select
                     value={form.category}
                     onChange={e => setForm({ ...form, category: e.target.value })}
@@ -311,36 +312,37 @@ export default function Dashboard() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">MOQ</label>
+                  <label className="block text-sm font-medium mb-1">最小起订量</label>
                   <input
                     type="text"
                     value={form.moq}
                     onChange={e => setForm({ ...form, moq: e.target.value })}
                     className="w-full border rounded px-3 py-2"
-                    placeholder="50 pcs"
+                    placeholder="如：50件起订"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Price</label>
+                  <label className="block text-sm font-medium mb-1">价格</label>
                   <input
                     type="text"
                     value={form.price}
                     onChange={e => setForm({ ...form, price: e.target.value })}
                     className="w-full border rounded px-3 py-2"
-                    placeholder="$25.00"
+                    placeholder="如：¥128.00"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Material</label>
+                  <label className="block text-sm font-medium mb-1">材质</label>
                   <input
                     type="text"
                     value={form.material}
                     onChange={e => setForm({ ...form, material: e.target.value })}
                     className="w-full border rounded px-3 py-2"
+                    placeholder="如：100%棉"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Main Image URL</label>
+                  <label className="block text-sm font-medium mb-1">主图URL</label>
                   <input
                     type="text"
                     value={form.mainImage}
@@ -349,12 +351,13 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium mb-1">Description</label>
+                  <label className="block text-sm font-medium mb-1">产品描述</label>
                   <textarea
                     value={form.description}
                     onChange={e => setForm({ ...form, description: e.target.value })}
                     className="w-full border rounded px-3 py-2"
                     rows={3}
+                    placeholder="请输入产品描述"
                   />
                 </div>
                 <div className="flex gap-4">
@@ -364,7 +367,7 @@ export default function Dashboard() {
                       checked={form.featured}
                       onChange={e => setForm({ ...form, featured: e.target.checked })}
                     />
-                    Featured
+                    推荐产品
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -372,7 +375,7 @@ export default function Dashboard() {
                       checked={form.active}
                       onChange={e => setForm({ ...form, active: e.target.checked })}
                     />
-                    Active (visible on frontend)
+                    上架（前台可见）
                   </label>
                 </div>
               </div>
@@ -382,32 +385,32 @@ export default function Dashboard() {
                   disabled={saving}
                   className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50"
                 >
-                  {saving ? 'Saving...' : (editingId ? 'Update' : 'Create')}
+                  {saving ? '保存中...' : (editingId ? '更新产品' : '创建产品')}
                 </button>
                 <button
                   type="button"
                   onClick={() => { setShowForm(false); setEditingId(null); }}
                   className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
                 >
-                  Cancel
+                  取消
                 </button>
               </div>
             </form>
           )}
 
           {products.length === 0 ? (
-            <p className="text-gray-500">No products found. Click "Add Product" to create one.</p>
+            <p className="text-gray-500">暂无产品，点击「添加产品」创建第一个产品</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-2 text-left">Title</th>
-                    <th className="px-4 py-2 text-left">Category</th>
-                    <th className="px-4 py-2 text-left">Price</th>
-                    <th className="px-4 py-2 text-center">Featured</th>
-                    <th className="px-4 py-2 text-center">Status</th>
-                    <th className="px-4 py-2 text-right">Actions</th>
+                    <th className="px-4 py-2 text-left">产品名称</th>
+                    <th className="px-4 py-2 text-left">品类</th>
+                    <th className="px-4 py-2 text-left">价格</th>
+                    <th className="px-4 py-2 text-center">推荐</th>
+                    <th className="px-4 py-2 text-center">状态</th>
+                    <th className="px-4 py-2 text-right">操作</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -419,7 +422,7 @@ export default function Dashboard() {
                       <td className="px-4 py-3 text-center">{product.featured ? '★' : '-'}</td>
                       <td className="px-4 py-3 text-center">
                         <span className={`px-2 py-1 rounded text-xs ${product.active ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-600'}`}>
-                          {product.active ? 'Active' : 'Inactive'}
+                          {product.active ? '已上架' : '已下架'}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right space-x-2">
@@ -427,19 +430,19 @@ export default function Dashboard() {
                           onClick={() => handleEdit(product)}
                           className="text-blue-600 hover:text-blue-800"
                         >
-                          Edit
+                          编辑
                         </button>
                         <button
                           onClick={() => handleToggleActive(product)}
                           className="text-yellow-600 hover:text-yellow-800"
                         >
-                          {product.active ? 'Deactivate' : 'Activate'}
+                          {product.active ? '下架' : '上架'}
                         </button>
                         <button
                           onClick={() => handleDelete(product)}
                           className="text-red-600 hover:text-red-800"
                         >
-                          Delete
+                          删除
                         </button>
                       </td>
                     </tr>
