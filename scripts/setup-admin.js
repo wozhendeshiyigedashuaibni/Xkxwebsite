@@ -2,10 +2,10 @@
  * 管理员账户设置脚本
  *
  * 使用方法:
- *   node scripts/setup-admin.js [email] [password]
+ *   node scripts/setup-admin.js [username] [password]
  *
  * 示例:
- *   node scripts/setup-admin.js admin@example.com MySecurePass123
+ *   node scripts/setup-admin.js xikaixi MySecurePass123
  *
  * 如果管理员已存在，将更新密码
  * 如果不存在，将创建新管理员
@@ -16,26 +16,20 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-// 邮箱格式验证
-function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
 async function setupAdmin() {
   const args = process.argv.slice(2);
 
   if (args.length < 2) {
-    console.log('使用方法: node scripts/setup-admin.js [email] [password]');
-    console.log('示例: node scripts/setup-admin.js admin@example.com MySecurePass123');
+    console.log('使用方法: node scripts/setup-admin.js [username] [password]');
+    console.log('示例: node scripts/setup-admin.js xikaixi MySecurePass123');
     process.exit(1);
   }
 
-  const [email, password] = args;
+  const [username, password] = args;
 
-  // 验证邮箱格式
-  if (!isValidEmail(email)) {
-    console.error('错误: 请输入有效的邮箱地址');
+  // 验证用户名
+  if (username.length < 3) {
+    console.error('错误: 用户名长度至少3位');
     process.exit(1);
   }
 
@@ -59,29 +53,28 @@ async function setupAdmin() {
   try {
     // 加密密码
     const hashedPassword = await bcrypt.hash(password, 10);
-    const emailNormalized = email.toLowerCase().trim();
 
     // 查找现有管理员
     const existingAdmin = await prisma.admin.findUnique({
-      where: { email: emailNormalized },
+      where: { username },
     });
 
     if (existingAdmin) {
       // 更新密码
       await prisma.admin.update({
-        where: { email: emailNormalized },
+        where: { username },
         data: { password: hashedPassword },
       });
-      console.log(`管理员 "${emailNormalized}" 密码已更新`);
+      console.log(`管理员 "${username}" 密码已更新`);
     } else {
       // 创建新管理员
       await prisma.admin.create({
         data: {
-          email: emailNormalized,
+          username,
           password: hashedPassword,
         },
       });
-      console.log(`管理员 "${emailNormalized}" 已创建`);
+      console.log(`管理员 "${username}" 已创建`);
     }
 
     console.log('设置完成！');
