@@ -2,6 +2,7 @@ import express from 'express';
 import { prisma } from '../prisma.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { upload } from '../middleware/upload.js';
+import { formatProduct, formatProducts, formatLead, formatLeads, formatContent, formatContents } from '../utils/formatters.js';
 
 const router = express.Router();
 
@@ -27,14 +28,7 @@ router.get('/products', async (req, res) => {
       orderBy: { createdAt: 'desc' }
     });
 
-    const formatted = products.map(p => ({
-      ...p,
-      images: JSON.parse(p.images || '[]'),
-      customOptions: JSON.parse(p.customOptions || '[]'),
-      tags: JSON.parse(p.tags || '[]')
-    }));
-
-    res.json(formatted);
+    res.json(formatProducts(products));
   } catch (error) {
     console.error('Get products error:', error);
     res.status(500).json({ error: 'Failed to fetch products', details: error.message });
@@ -51,14 +45,7 @@ router.get('/products/:id', async (req, res) => {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    const formatted = {
-      ...product,
-      images: JSON.parse(product.images || '[]'),
-      customOptions: JSON.parse(product.customOptions || '[]'),
-      tags: JSON.parse(product.tags || '[]')
-    };
-
-    res.json(formatted);
+    res.json(formatProduct(product));
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
@@ -97,15 +84,7 @@ router.post('/products', async (req, res) => {
 
     const product = await prisma.product.create({ data });
 
-    // 返回格式化的产品
-    const formatted = {
-      ...product,
-      images: JSON.parse(product.images),
-      customOptions: JSON.parse(product.customOptions),
-      tags: JSON.parse(product.tags)
-    };
-
-    res.status(201).json(formatted);
+    res.status(201).json(formatProduct(product));
   } catch (error) {
     console.error('Product create error:', error);
     if (error.code === 'P2002') {
@@ -141,15 +120,7 @@ router.put('/products/:id', async (req, res) => {
       data
     });
 
-    // 返回格式化的产品
-    const formatted = {
-      ...product,
-      images: JSON.parse(product.images),
-      customOptions: JSON.parse(product.customOptions),
-      tags: JSON.parse(product.tags)
-    };
-
-    res.json(formatted);
+    res.json(formatProduct(product));
   } catch (error) {
     console.error('Product update error:', error);
     if (error.code === 'P2002') {
@@ -186,13 +157,8 @@ router.get('/content', async (req, res) => {
     const contents = await prisma.content.findMany({
       orderBy: { updatedAt: 'desc' }
     });
-    
-    const formatted = contents.map(item => ({
-      ...item,
-      value: JSON.parse(item.value)
-    }));
 
-    res.json(formatted);
+    res.json(formatContents(contents));
   } catch (error) {
     console.error('Get content error:', error);
     res.status(500).json({ error: 'Failed to fetch content', details: error.message });
@@ -209,12 +175,7 @@ router.get('/content/:key', async (req, res) => {
       return res.status(404).json({ error: 'Content not found' });
     }
 
-    const formatted = {
-      ...content,
-      value: JSON.parse(content.value)
-    };
-
-    res.json(formatted);
+    res.json(formatContent(content));
   } catch (error) {
     console.error('Get content by key error:', error);
     res.status(500).json({ error: 'Failed to fetch content', details: error.message });
@@ -243,12 +204,7 @@ router.put('/content/:key', async (req, res) => {
       create: { key: req.params.key, value: JSON.stringify(value) }
     });
 
-    const formatted = {
-      ...content,
-      value: JSON.parse(content.value)
-    };
-
-    res.json(formatted);
+    res.json(formatContent(content));
   } catch (error) {
     console.error('Update content error:', error);
     res.status(500).json({ error: 'Failed to update content', details: error.message });
@@ -288,12 +244,7 @@ router.get('/leads', async (req, res) => {
       orderBy: { createdAt: 'desc' }
     });
 
-    const formatted = leads.map(l => ({
-      ...l,
-      files: JSON.parse(l.files || '[]')
-    }));
-
-    res.json(formatted);
+    res.json(formatLeads(leads));
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
@@ -309,12 +260,7 @@ router.get('/leads/:id', async (req, res) => {
       return res.status(404).json({ error: 'Lead not found' });
     }
 
-    const formatted = {
-      ...lead,
-      files: JSON.parse(lead.files || '[]')
-    };
-
-    res.json(formatted);
+    res.json(formatLead(lead));
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
