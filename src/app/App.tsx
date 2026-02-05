@@ -74,6 +74,7 @@ function AppContent() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
+          {/* 统一后台登录页：src/admin/LoginPage */}
           <Route path="/admin/login" element={<LoginPage />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/password" element={<PasswordChange />} />

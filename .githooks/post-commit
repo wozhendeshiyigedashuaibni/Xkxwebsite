@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Allow disabling in CI or specific commits.
+if [[ "${AUTO_PUSH_TO_GITHUB:-1}" == "0" ]]; then
+  exit 0
+fi
+
+# Avoid recursive trigger when post-commit itself runs git commands.
+if [[ "${AUTO_PUSH_RUNNING:-0}" == "1" ]]; then
+  exit 0
+fi
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  exit 0
+fi
+
+if ! git remote get-url origin >/dev/null 2>&1; then
+  echo "[auto-push] skip: remote 'origin' 未配置。"
+  exit 0
+fi
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+if [[ -z "$branch" || "$branch" == "HEAD" ]]; then
+  echo "[auto-push] skip: 当前不在分支上（detached HEAD）。"
+  exit 0
+fi
+
+# Ensure this only runs for normal local commits.
+if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+  exit 0
+fi
+
+echo "[auto-push] pushing origin/$branch ..."
+AUTO_PUSH_RUNNING=1 git push --set-upstream origin "$branch" >/dev/null 2>&1 || {
+  echo "[auto-push] failed: push 到 origin/$branch 失败，请检查远端权限或网络。"
+  exit 0
+}
+
+echo "[auto-push] done"
