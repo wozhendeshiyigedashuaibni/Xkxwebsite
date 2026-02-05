@@ -12,10 +12,6 @@
   },
   "rewrites": [
     {
-      "source": "/api/admin/products",
-      "destination": "/api/admin-products"
-    },
-    {
       "source": "/:path((?!api/).*)",
       "destination": "/index.html"
     }

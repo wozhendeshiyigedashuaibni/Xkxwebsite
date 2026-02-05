@@ -2,7 +2,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || '';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS
@@ -19,6 +19,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   
   if (req.method !== 'GET') {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
+  }
+  
+  // Check JWT_SECRET configuration
+  if (!JWT_SECRET) {
+    console.error('JWT_SECRET is not configured');
+    return res.status(500).json({ success: false, error: 'Server configuration error', code: 'JWT_SECRET_MISSING' });
   }
   
   // Verify JWT token
