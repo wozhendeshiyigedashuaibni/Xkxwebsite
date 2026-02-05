@@ -4,17 +4,17 @@ import bcrypt from 'bcryptjs';
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // Create admin user
-  const hashedPassword = await bcrypt.hash('admin123', 10);
+  // Create admin user with default email
+  const hashedPassword = await bcrypt.hash('Admin@2024', 10);
   const admin = await prisma.admin.upsert({
-    where: { username: 'admin' },
+    where: { email: 'admin@xikaixi.cn' },
     update: {},
     create: {
-      username: 'admin',
+      email: 'admin@xikaixi.cn',
       password: hashedPassword
     }
   });
-  console.log('✅ Admin created:', admin.username);
+  console.log('✅ Admin created:', admin.email);
 
   // Create default content
   const defaultContent = {

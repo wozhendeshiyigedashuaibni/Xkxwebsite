@@ -23,6 +23,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   return json(res, {
     id: auth.admin.id,
-    username: auth.admin.username,
+    email: auth.admin.email,
   });
 }

@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'xikaixi-jwt-secret-change-in-produ
 
 export interface JwtPayload {
   adminId: number;
-  username: string;
+  email: string;
 }
 
 /**
@@ -39,9 +39,9 @@ export function verifyToken(token: string): JwtPayload | null {
 /**
  * 生成 JWT token
  */
-export function generateToken(adminId: number, username: string): string {
+export function generateToken(adminId: number, email: string): string {
   return jwt.sign(
-    { adminId, username } as JwtPayload,
+    { adminId, email } as JwtPayload,
     JWT_SECRET,
     { expiresIn: '24h' }
   );
@@ -52,7 +52,7 @@ export function generateToken(adminId: number, username: string): string {
  */
 export async function authenticateRequest(req: VercelRequest): Promise<{
   authenticated: boolean;
-  admin?: { id: number; username: string };
+  admin?: { id: number; email: string };
   error?: string;
 }> {
   const token = getTokenFromHeader(req);
@@ -70,7 +70,7 @@ export async function authenticateRequest(req: VercelRequest): Promise<{
   try {
     const admin = await prisma.admin.findUnique({
       where: { id: payload.adminId },
-      select: { id: true, username: true },
+      select: { id: true, email: true },
     });
 
     if (!admin) {
