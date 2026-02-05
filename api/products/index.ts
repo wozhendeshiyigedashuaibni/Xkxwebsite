@@ -1,40 +1,30 @@
 // api/products/index.ts
 // 获取产品列表（公开 API）
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import type { PrismaClient } from '@prisma/client';
-
-// CORS headers
-function setCors(req: VercelRequest, res: VercelResponse): boolean {
-  const origin = req.headers.origin;
-  const allowedOrigins = ['https://xikaixi.cn', 'https://www.xikaixi.cn'];
-  
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return true;
-  }
-  return false;
-}
 
 // Prisma singleton
-let prisma: PrismaClient | null = null;
+let prisma: any = null;
 
-async function getPrisma(): Promise<PrismaClient> {
+async function getPrisma() {
   if (!prisma) {
-    const { PrismaClient: PC } = await import('@prisma/client');
-    prisma = new PC();
+    const { PrismaClient } = await import('@prisma/client');
+    prisma = new PrismaClient();
   }
   return prisma;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (setCors(req, res)) return;
+  // CORS
+  const origin = req.headers.origin;
+  if (origin && ['https://xikaixi.cn', 'https://www.xikaixi.cn'].includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
   
   if (req.method !== 'GET') {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
@@ -90,7 +80,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }),
     ]);
     
-    const parsedProducts = products.map(product => ({
+    const parsedProducts = products.map((product: any) => ({
       ...product,
       tags: typeof product.tags === 'string' ? JSON.parse(product.tags) : product.tags,
     }));
@@ -111,7 +101,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error('API Error:', error);
     return res.status(500).json({
       success: false,
-      error: 'Internal server error',
+      error: error.message || 'Internal server error',
     });
   }
 }
