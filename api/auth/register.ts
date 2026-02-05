@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { handleAdminLogin } from '../lib/admin-auth';
+import registerHandler from '../register';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  return handleAdminLogin(req, res);
+  return registerHandler(req, res);
 }
