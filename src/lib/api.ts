@@ -6,8 +6,8 @@
 import { getMockProducts, getMockProduct } from './mockData';
 import { API_BASE_URL } from '../config/api';
 
-// Use mock data as fallback when API fails
-const ENABLE_MOCK_FALLBACK = true;
+// Temporarily use mock data for products until API is fixed
+const USE_MOCK_FOR_PRODUCTS = true;
 
 interface ApiError {
   error: string;
@@ -35,15 +35,10 @@ class ApiClient {
         },
       });
 
-      // Check if response is HTML (backend not running)
+      // Check content type
       const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('text/html')) {
-        // Only show error if not in mock mode
-        if (!USE_MOCK_DATA) {
-          console.error('❌ Backend not running on port 3001');
-          console.info('💡 Tip: Run `npm run server` in a separate terminal');
-        }
-        throw new Error('BACKEND_NOT_RUNNING');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Invalid response format');
       }
 
       if (!response.ok) {
@@ -55,10 +50,6 @@ class ApiClient {
 
       return await response.json();
     } catch (error) {
-      // Check if it's a backend not running error
-      if (error instanceof Error && error.message === 'BACKEND_NOT_RUNNING') {
-        throw error;
-      }
       console.error('API request failed:', error);
       throw error;
     }
@@ -92,47 +83,45 @@ class ApiClient {
 
   // ========== PRODUCTS ==========
   async getProducts(params?: { category?: string; featured?: boolean }) {
+    // Use mock data directly until API is fixed
+    if (USE_MOCK_FOR_PRODUCTS) {
+      return Promise.resolve(getMockProducts(params));
+    }
+
     try {
       const query = new URLSearchParams();
       if (params?.category) query.append('category', params.category);
       if (params?.featured) query.append('featured', 'true');
 
       const queryString = query.toString();
-      const products = await this.request<Product[]>(
+      return await this.request<Product[]>(
         `/products${queryString ? `?${queryString}` : ''}`
       );
-
-      // If API returns empty array and fallback is enabled, use mock data
-      if (products.length === 0 && ENABLE_MOCK_FALLBACK) {
-        console.log('No products in database, using mock data');
-        return getMockProducts(params);
-      }
-
-      return products;
     } catch (error) {
-      // Fallback to mock data on any error
-      if (ENABLE_MOCK_FALLBACK) {
-        console.log('API error, falling back to mock data:', error);
-        return getMockProducts(params);
-      }
-      throw error;
+      console.log('API error, using mock data:', error);
+      return getMockProducts(params);
     }
   }
 
   async getProduct(identifier: string | number) {
+    // Use mock data directly until API is fixed
+    if (USE_MOCK_FOR_PRODUCTS) {
+      const product = getMockProduct(identifier);
+      if (!product) {
+        throw new Error('Product not found');
+      }
+      return Promise.resolve(product);
+    }
+
     try {
       return await this.request<Product>(`/products/${identifier}`);
     } catch (error) {
-      // Fallback to mock data on any error
-      if (ENABLE_MOCK_FALLBACK) {
-        console.log('API error, falling back to mock data:', error);
-        const product = getMockProduct(identifier);
-        if (!product) {
-          throw new Error('Product not found');
-        }
-        return product;
+      console.log('API error, using mock data:', error);
+      const product = getMockProduct(identifier);
+      if (!product) {
+        throw new Error('Product not found');
       }
-      throw error;
+      return product;
     }
   }
 
@@ -167,7 +156,6 @@ class ApiClient {
   }
 
   // ========== ADMIN API ==========
-  // 需要传入 token 的请求
   private async authenticatedRequest<T>(
     endpoint: string,
     token: string,
@@ -187,7 +175,7 @@ class ApiClient {
     const query = new URLSearchParams();
     if (params?.category) query.append('category', params.category);
     if (params?.search) query.append('search', params.search);
-    
+
     const queryString = query.toString();
     return this.authenticatedRequest<Product[]>(
       `/admin/products${queryString ? `?${queryString}` : ''}`,
@@ -245,7 +233,7 @@ class ApiClient {
   async adminGetLeads(token: string, params?: { status?: string }) {
     const query = new URLSearchParams();
     if (params?.status) query.append('status', params.status);
-    
+
     const queryString = query.toString();
     return this.authenticatedRequest<Lead[]>(
       `/admin/leads${queryString ? `?${queryString}` : ''}`,
