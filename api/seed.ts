@@ -1,67 +1,69 @@
-// api/seed.ts - Database seed endpoint
-// Only available in development/preview environments
-// BLOCKED in production for security
+// api/seed.ts - 数据库初始化（仅开发/预览环境）
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
 
-// Vercel sets VERCEL_ENV to 'production', 'preview', or 'development'
 const VERCEL_ENV = process.env.VERCEL_ENV || 'development';
 const IS_PRODUCTION = VERCEL_ENV === 'production';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
   
-  // BLOCK in production environment
+  // 生产环境禁止
   if (IS_PRODUCTION) {
     return res.status(403).json({ 
       success: false, 
-      error: 'Seed endpoint is disabled in production',
+      error: '生产环境禁止使用 seed 接口',
       code: 'PRODUCTION_BLOCKED'
     });
   }
   
   if (req.method !== 'POST') {
-    return res.status(405).json({ success: false, error: 'Method not allowed' });
+    return res.status(405).json({ success: false, error: '不支持的请求方法' });
   }
   
-  // Still require a secret in non-production for safety
+  // 需要密钥验证
   const SEED_SECRET = process.env.SEED_SECRET || process.env.JWT_SECRET || '';
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ') || authHeader.split(' ')[1] !== SEED_SECRET) {
-    return res.status(401).json({ success: false, error: 'Unauthorized: Invalid seed secret' });
+    return res.status(401).json({ success: false, error: '未授权' });
   }
   
   try {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: '请提供 email 和 password' });
+    }
+    
     const { PrismaClient } = await import('@prisma/client');
     const prisma = new PrismaClient();
     
-    // Check if admin already exists
-    const existingAdmin = await prisma.admin.findUnique({
-      where: { username: 'admin' }
+    // 检查是否已存在
+    const existing = await prisma.admin.findUnique({
+      where: { email: String(email).toLowerCase() }
     });
     
-    if (existingAdmin) {
+    if (existing) {
       await prisma.$disconnect();
       return res.status(200).json({
         success: true,
-        message: 'Admin user already exists',
-        admin: { id: existingAdmin.id, username: existingAdmin.username }
+        message: '管理员已存在',
+        admin: { id: existing.id, email: existing.email }
       });
     }
     
-    // Create admin user with bcrypt hash (salt rounds = 10)
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    // 创建管理员
+    const passwordHash = await bcrypt.hash(password, 10);
     const admin = await prisma.admin.create({
       data: {
-        username: 'admin',
-        password: hashedPassword
+        email: String(email).toLowerCase(),
+        passwordHash,
+        role: 'admin',
+        tokenVersion: 0,
       }
     });
     
@@ -69,20 +71,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     
     return res.status(201).json({
       success: true,
-      message: 'Admin user created successfully',
-      admin: { id: admin.id, username: admin.username },
-      credentials: {
-        username: 'admin',
-        password: 'admin123'
-      },
-      warning: 'Please change the default password immediately!'
+      message: '管理员创建成功',
+      admin: { id: admin.id, email: admin.email, role: admin.role },
+      warning: '请妥善保管密码，后续通过忘记密码功能修改'
     });
   } catch (error: any) {
     console.error('Seed error:', error);
-    return res.status(500).json({
-      success: false,
-      error: 'Database error',
-      message: error.message
-    });
+    return res.status(500).json({ success: false, error: '服务器错误', message: error.message });
   }
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,28 +17,17 @@ export default function LoginPage() {
       const response = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        // 处理需要修改密码的情况
-        if (data.code === 'DEFAULT_PASSWORD_BLOCKED') {
-          setError('当前使用默认密码，请先修改密码后再登录');
-          return;
-        }
         throw new Error(data.error || '登录失败');
       }
 
       localStorage.setItem('admin_token', data.data.token);
-      
-      // 检查是否需要强制修改密码
-      if (data.data.mustChangePassword) {
-        navigate('/admin/password', { state: { mustChange: true } });
-      } else {
-        navigate('/admin/dashboard');
-      }
+      navigate('/admin/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : '登录失败');
     } finally {
@@ -59,13 +48,13 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">用户名</label>
+            <label className="block text-gray-700 mb-2">邮箱</label>
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="请输入用户名"
+              placeholder="请输入邮箱"
               required
             />
           </div>

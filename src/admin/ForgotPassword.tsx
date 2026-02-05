@@ -2,21 +2,18 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function ForgotPassword() {
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<any>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
-    setDebugInfo(null);
 
-    if (!username && !email) {
-      setError('请输入用户名或邮箱');
+    if (!email) {
+      setError('请输入邮箱地址');
       return;
     }
 
@@ -26,7 +23,7 @@ export default function ForgotPassword() {
       const response = await fetch('/api/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email }),
+        body: JSON.stringify({ email }),
       });
 
       const data = await response.json();
@@ -35,12 +32,8 @@ export default function ForgotPassword() {
         throw new Error(data.error || '请求失败');
       }
 
-      setSuccess(data.message || '如果账号存在，重置链接已发送');
-      
-      // 开发环境显示调试信息
-      if (data.debug) {
-        setDebugInfo(data.debug);
-      }
+      setSuccess(data.message || '如果该邮箱已注册，我们已发送重置密码链接，请查收邮件');
+      setEmail('');
     } catch (err) {
       setError(err instanceof Error ? err.message : '请求失败');
     } finally {
@@ -53,6 +46,10 @@ export default function ForgotPassword() {
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold text-center mb-6">忘记密码</h1>
         
+        <p className="text-gray-600 text-sm mb-6 text-center">
+          请输入您的注册邮箱，我们将发送密码重置链接
+        </p>
+        
         {error && (
           <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
             {error}
@@ -64,37 +61,17 @@ export default function ForgotPassword() {
             {success}
           </div>
         )}
-        
-        {debugInfo && (
-          <div className="bg-blue-100 text-blue-700 p-3 rounded mb-4 text-sm">
-            <p className="font-semibold mb-1">开发环境调试信息：</p>
-            <p className="break-all">重置链接: <a href={debugInfo.resetUrl} className="underline">{debugInfo.resetUrl}</a></p>
-            <p>有效期至: {new Date(debugInfo.expiresAt).toLocaleString()}</p>
-          </div>
-        )}
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">用户名</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="请输入用户名"
-            />
-          </div>
-
-          <div className="mb-4 text-center text-gray-500">或</div>
-
           <div className="mb-6">
-            <label className="block text-gray-700 mb-2">邮箱</label>
+            <label className="block text-gray-700 mb-2">邮箱地址</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="请输入绑定邮箱"
+              placeholder="请输入注册邮箱"
+              required
             />
           </div>
 

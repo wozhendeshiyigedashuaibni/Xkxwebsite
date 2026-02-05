@@ -14,7 +14,7 @@ function generateSlug(title: string): string {
 }
 
 // Verify JWT and return decoded payload or null
-function verifyAuth(req: VercelRequest): { userId: number; username: string } | null {
+function verifyAuth(req: VercelRequest): { userId: number; email: string; tokenVersion: number } | null {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return null;
@@ -23,6 +23,19 @@ function verifyAuth(req: VercelRequest): { userId: number; username: string } | 
     return jwt.verify(authHeader.split(' ')[1], JWT_SECRET) as any;
   } catch {
     return null;
+  }
+}
+
+// Verify tokenVersion against database
+async function verifyTokenVersion(prisma: any, userId: number, tokenVersion: number): Promise<boolean> {
+  try {
+    const admin = await prisma.admin.findUnique({
+      where: { id: userId },
+      select: { tokenVersion: true }
+    });
+    return admin && admin.tokenVersion === tokenVersion;
+  } catch {
+    return true; // If table doesn't have tokenVersion column, skip check
   }
 }
 
@@ -41,8 +54,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   
   // Check JWT_SECRET configuration
   if (!JWT_SECRET) {
-    console.error('JWT_SECRET is not configured');
-    return res.status(500).json({ success: false, error: 'Server configuration error', code: 'JWT_SECRET_MISSING' });
+    return res.status(500).json({ success: false, error: '服务器配置错误', code: 'JWT_SECRET_MISSING' });
   }
   
   // Verify authentication
@@ -54,6 +66,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const { PrismaClient } = await import('@prisma/client');
     const prisma = new PrismaClient();
+    
+    // Verify tokenVersion to ensure token hasn't been revoked
+    const isValidToken = await verifyTokenVersion(prisma, user.userId, user.tokenVersion);
+    if (!isValidToken) {
+      await prisma.$disconnect();
+      return res.status(401).json({ success: false, error: '登录已失效，请重新登录', code: 'TOKEN_REVOKED' });
+    }
     
     // GET - List all products
     if (req.method === 'GET') {

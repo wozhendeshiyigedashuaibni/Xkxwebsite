@@ -1,4 +1,4 @@
-// api/admin/password.ts - 修改密码接口（中文提示）
+// api/admin/password.ts - 修改密码（tokenVersion +1 使旧 token 失效）
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
@@ -17,7 +17,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ success: false, error: '不支持的请求方法' });
   
   if (!JWT_SECRET) {
-    return res.status(500).json({ success: false, error: '服务器配置错误', code: 'JWT_SECRET_MISSING' });
+    return res.status(500).json({ success: false, error: '服务器配置错误' });
   }
   
   const authHeader = req.headers.authorization;
@@ -25,10 +25,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ success: false, error: '请先登录', code: 'NO_TOKEN' });
   }
   
-  let userId: number;
+  let decoded: any;
   try {
-    const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET) as any;
-    userId = decoded.userId;
+    decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
   } catch {
     return res.status(401).json({ success: false, error: '登录已过期，请重新登录', code: 'INVALID_TOKEN' });
   }
@@ -44,17 +43,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ success: false, error: '新密码至少需要8个字符', code: 'WEAK_PASSWORD' });
     }
     
-    if (newPassword === 'admin123') {
-      return res.status(400).json({ success: false, error: '不能使用默认密码，请设置更安全的密码', code: 'DEFAULT_PASSWORD' });
-    }
-    
     const { PrismaClient } = await import('@prisma/client');
     const prisma = new PrismaClient();
     
-    // 只选择必要字段
     const admin = await prisma.admin.findUnique({ 
-      where: { id: userId },
-      select: { id: true, password: true }
+      where: { id: decoded.userId },
+      select: { id: true, passwordHash: true, tokenVersion: true }
     });
     
     if (!admin) {
@@ -62,16 +56,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(404).json({ success: false, error: '用户不存在', code: 'NOT_FOUND' });
     }
     
-    const isValid = await bcrypt.compare(currentPassword, admin.password);
+    // 验证 tokenVersion（确保 token 未被吊销）
+    if (admin.tokenVersion !== decoded.tokenVersion) {
+      await prisma.$disconnect();
+      return res.status(401).json({ success: false, error: '登录已失效，请重新登录', code: 'TOKEN_REVOKED' });
+    }
+    
+    const isValid = await bcrypt.compare(currentPassword, admin.passwordHash);
     if (!isValid) {
       await prisma.$disconnect();
       return res.status(401).json({ success: false, error: '当前密码错误', code: 'WRONG_PASSWORD' });
     }
     
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // 更新密码并递增 tokenVersion（使所有旧 token 失效）
+    const newPasswordHash = await bcrypt.hash(newPassword, 10);
     await prisma.admin.update({
-      where: { id: userId },
-      data: { password: hashedPassword },
+      where: { id: decoded.userId },
+      data: { 
+        passwordHash: newPasswordHash,
+        tokenVersion: admin.tokenVersion + 1,
+      },
     });
     
     await prisma.$disconnect();
@@ -82,6 +86,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   } catch (error: any) {
     console.error('Password change error:', error);
-    return res.status(500).json({ success: false, error: '服务器内部错误', code: 'UNKNOWN' });
+    return res.status(500).json({ success: false, error: '服务器内部错误' });
   }
 }
