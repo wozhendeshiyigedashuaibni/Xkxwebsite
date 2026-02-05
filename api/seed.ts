@@ -47,7 +47,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const normalizedEmail = String(email).toLowerCase();
     const requestedUsername = String(username || generateUsernameFromEmail(normalizedEmail)).toLowerCase();
 
-    const { prisma } = await import('./lib/prisma');
+    const { prisma } = await import('../lib/server/prisma');
 
     // 检查是否已存在
     const existing = await prisma.admin.findUnique({

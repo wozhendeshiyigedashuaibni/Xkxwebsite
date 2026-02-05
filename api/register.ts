@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
-import { prisma } from './lib/prisma';
+import { prisma } from '../lib/server/prisma';
 
 const REGISTER_SECRET = process.env.ADMIN_REGISTER_SECRET || '';
 const VERCEL_ENV = process.env.VERCEL_ENV || 'development';
