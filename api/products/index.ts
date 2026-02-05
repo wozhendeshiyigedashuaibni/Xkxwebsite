@@ -1,20 +1,48 @@
 // api/products/index.ts
 // 获取产品列表（公开 API）
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getPrisma } from '../lib/prisma';
-import { withCors } from '../lib/cors';
-import { successResponse, errorResponse, handleError } from '../lib/response';
+import type { PrismaClient } from '@prisma/client';
 
-async function handler(req: VercelRequest, res: VercelResponse) {
-  // 只允许 GET 请求
+// CORS headers
+function setCors(req: VercelRequest, res: VercelResponse): boolean {
+  const origin = req.headers.origin;
+  const allowedOrigins = ['https://xikaixi.cn', 'https://www.xikaixi.cn'];
+  
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return true;
+  }
+  return false;
+}
+
+// Prisma singleton
+let prisma: PrismaClient | null = null;
+
+async function getPrisma(): Promise<PrismaClient> {
+  if (!prisma) {
+    const { PrismaClient: PC } = await import('@prisma/client');
+    prisma = new PC();
+  }
+  return prisma;
+}
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (setCors(req, res)) return;
+  
   if (req.method !== 'GET') {
-    return errorResponse(res, 'Method not allowed', 405);
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
   
   try {
-    const prisma = await getPrisma();
+    const db = await getPrisma();
     
-    // 解析查询参数
     const {
       page = '1',
       limit = '20',
@@ -27,19 +55,10 @@ async function handler(req: VercelRequest, res: VercelResponse) {
     const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10)));
     const skip = (pageNum - 1) * limitNum;
     
-    // 构建查询条件
-    const where: any = {
-      active: true, // 只返回激活的产品
-    };
+    const where: any = { active: true };
     
-    if (category) {
-      where.category = category;
-    }
-    
-    if (featured === 'true') {
-      where.featured = true;
-    }
-    
+    if (category) where.category = category;
+    if (featured === 'true') where.featured = true;
     if (search && typeof search === 'string') {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
@@ -48,10 +67,9 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       ];
     }
     
-    // 并行查询总数和数据
     const [total, products] = await Promise.all([
-      prisma.product.count({ where }),
-      prisma.product.findMany({
+      db.product.count({ where }),
+      db.product.findMany({
         where,
         select: {
           id: true,
@@ -66,35 +84,34 @@ async function handler(req: VercelRequest, res: VercelResponse) {
           tags: true,
           createdAt: true,
         },
-        orderBy: [
-          { featured: 'desc' },
-          { createdAt: 'desc' },
-        ],
+        orderBy: [{ featured: 'desc' }, { createdAt: 'desc' }],
         skip,
         take: limitNum,
       }),
     ]);
     
-    // 解析 JSON 字段
     const parsedProducts = products.map(product => ({
       ...product,
       tags: typeof product.tags === 'string' ? JSON.parse(product.tags) : product.tags,
     }));
     
-    // 返回分页数据
-    return successResponse(res, {
-      products: parsedProducts,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total,
-        totalPages: Math.ceil(total / limitNum),
+    return res.status(200).json({
+      success: true,
+      data: {
+        products: parsedProducts,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+        },
       },
     });
-    
-  } catch (error) {
-    return handleError(res, error);
+  } catch (error: any) {
+    console.error('API Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
   }
 }
-
-export default withCors(handler);
