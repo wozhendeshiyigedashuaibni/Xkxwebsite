@@ -29,7 +29,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { username, password } = req.body;
     
     if (!username || !password) {
-      return res.status(400).json({ success: false, error: 'Username and password are required' });
+      return res.status(400).json({ success: false, error: 'Username and password are required', code: 'MISSING_CREDENTIALS' });
     }
     
     // Check JWT_SECRET
@@ -50,14 +50,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await prisma.$disconnect();
     
     if (!admin) {
-      return res.status(401).json({ success: false, error: 'Invalid credentials' });
+      return res.status(401).json({ success: false, error: 'Invalid credentials', code: 'USER_NOT_FOUND' });
     }
     
     // 验证密码
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     
     if (!isPasswordValid) {
-      return res.status(401).json({ success: false, error: 'Invalid credentials' });
+      return res.status(401).json({ success: false, error: 'Invalid credentials', code: 'INVALID_PASSWORD' });
     }
     
     // 生成 JWT Token
@@ -71,6 +71,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       success: true,
       data: {
         token,
+        expiresIn: JWT_EXPIRES_IN,
         user: {
           id: admin.id,
           username: admin.username,
