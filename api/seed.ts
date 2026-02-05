@@ -1,10 +1,12 @@
-// api/seed.ts - One-time database seed endpoint
-// Creates admin user if not exists
-// This endpoint should be disabled or removed after initial setup
+// api/seed.ts - Database seed endpoint
+// Only available in development/preview environments
+// BLOCKED in production for security
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
 
-const SEED_SECRET = process.env.SEED_SECRET || process.env.JWT_SECRET || '';
+// Vercel sets VERCEL_ENV to 'production', 'preview', or 'development'
+const VERCEL_ENV = process.env.VERCEL_ENV || 'development';
+const IS_PRODUCTION = VERCEL_ENV === 'production';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS
@@ -16,11 +18,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).end();
   }
   
+  // BLOCK in production environment
+  if (IS_PRODUCTION) {
+    return res.status(403).json({ 
+      success: false, 
+      error: 'Seed endpoint is disabled in production',
+      code: 'PRODUCTION_BLOCKED'
+    });
+  }
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
   
-  // Require secret to prevent unauthorized seeding
+  // Still require a secret in non-production for safety
+  const SEED_SECRET = process.env.SEED_SECRET || process.env.JWT_SECRET || '';
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ') || authHeader.split(' ')[1] !== SEED_SECRET) {
     return res.status(401).json({ success: false, error: 'Unauthorized: Invalid seed secret' });
@@ -62,7 +74,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       credentials: {
         username: 'admin',
         password: 'admin123'
-      }
+      },
+      warning: 'Please change the default password immediately!'
     });
   } catch (error: any) {
     console.error('Seed error:', error);

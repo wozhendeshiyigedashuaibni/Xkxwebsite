@@ -1,11 +1,28 @@
 // api/login.ts
-// 管理员登录 API
+// 管理员登录 API with rate limiting
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
 const JWT_SECRET = process.env.JWT_SECRET || '';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+
+// Rate limit settings: 10 failed attempts per 5 minutes
+const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
+const RATE_LIMIT_MAX_ATTEMPTS = 10;
+
+// Get client IP from various headers
+function getClientIP(req: VercelRequest): string {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string') {
+    return forwarded.split(',')[0].trim();
+  }
+  const realIP = req.headers['x-real-ip'];
+  if (typeof realIP === 'string') {
+    return realIP;
+  }
+  return req.socket?.remoteAddress || 'unknown';
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS
@@ -25,6 +42,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
   
+  const clientIP = getClientIP(req);
+  
   try {
     const { username, password } = req.body;
     
@@ -42,14 +61,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { PrismaClient } = await import('@prisma/client');
     const prisma = new PrismaClient();
     
+    // Check rate limit - count failed attempts in the last 5 minutes
+    const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS);
+    const failedAttempts = await prisma.loginAttempt.count({
+      where: {
+        ip: clientIP,
+        success: false,
+        createdAt: { gte: windowStart },
+      },
+    });
+    
+    if (failedAttempts >= RATE_LIMIT_MAX_ATTEMPTS) {
+      await prisma.$disconnect();
+      const retryAfter = Math.ceil(RATE_LIMIT_WINDOW_MS / 1000);
+      res.setHeader('Retry-After', retryAfter.toString());
+      return res.status(429).json({ 
+        success: false, 
+        error: 'Too many login attempts. Please try again later.', 
+        code: 'RATE_LIMITED',
+        retryAfter,
+      });
+    }
+    
     // 查找管理员
     const admin = await prisma.admin.findUnique({
       where: { username: String(username) },
     });
     
-    await prisma.$disconnect();
-    
     if (!admin) {
+      // Record failed attempt
+      await prisma.loginAttempt.create({
+        data: { ip: clientIP, success: false },
+      });
+      await prisma.$disconnect();
       return res.status(401).json({ success: false, error: 'Invalid credentials', code: 'USER_NOT_FOUND' });
     }
     
@@ -57,8 +101,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     
     if (!isPasswordValid) {
+      // Record failed attempt
+      await prisma.loginAttempt.create({
+        data: { ip: clientIP, success: false },
+      });
+      await prisma.$disconnect();
       return res.status(401).json({ success: false, error: 'Invalid credentials', code: 'INVALID_PASSWORD' });
     }
+    
+    // Record successful attempt and clean up old attempts
+    await prisma.loginAttempt.create({
+      data: { ip: clientIP, success: true },
+    });
+    
+    // Clean up old login attempts (older than 24 hours)
+    const cleanupDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    await prisma.loginAttempt.deleteMany({
+      where: { createdAt: { lt: cleanupDate } },
+    });
+    
+    await prisma.$disconnect();
     
     // 生成 JWT Token
     const token = jwt.sign(

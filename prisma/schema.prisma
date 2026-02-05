@@ -61,3 +61,12 @@ model Lead {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model LoginAttempt {
+  id        Int      @id @default(autoincrement())
+  ip        String
+  success   Boolean
+  createdAt DateTime @default(now())
+  
+  @@index([ip, createdAt])
+}

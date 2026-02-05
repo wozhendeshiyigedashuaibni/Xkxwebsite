@@ -15,6 +15,7 @@ import { ContactPage } from './pages/ContactPage';
 import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 import LoginPage from '@/admin/LoginPage';
 import Dashboard from '@/admin/Dashboard';
+import PasswordChange from '@/admin/PasswordChange';
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -73,6 +74,7 @@ function AppContent() {
           <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
           <Route path="/admin/login" element={<LoginPage />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/password" element={<PasswordChange />} />
         </Routes>
       </main>
 
