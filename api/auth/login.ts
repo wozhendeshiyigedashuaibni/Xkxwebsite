@@ -60,11 +60,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(429).json({ success: false, error: '尝试次数过多，请5分钟后再试', code: 'RATE_LIMITED' });
       }
     } catch (e: any) {
-      if (e.code === 'P2021') rateLimitEnabled = false;
+      if (e.code === 'P2021' || e.code === 'P2022') rateLimitEnabled = false;
       else throw e;
     }
     
-    const admin = await prisma.admin.findUnique({ where: { username: String(username) } });
+    // 只选择必要字段（兼容旧数据库）
+    const admin = await prisma.admin.findUnique({ 
+      where: { username: String(username) },
+      select: { id: true, username: true, password: true }
+    });
     
     if (!admin) {
       if (rateLimitEnabled) { try { await prisma.loginAttempt.create({ data: { ip: clientIP, success: false } }); } catch {} }
@@ -101,19 +105,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await prisma.$disconnect();
     
     const token = jwt.sign(
-      { userId: admin.id, username: admin.username, role: (admin as any).role || 'admin' },
+      { userId: admin.id, username: admin.username, role: 'admin' },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'] }
     );
     
     return res.status(200).json({
       success: true,
-      data: { 
-        token, 
-        expiresIn: JWT_EXPIRES_IN, 
-        user: { id: admin.id, username: admin.username, role: (admin as any).role || 'admin' },
-        mustChangePassword: (admin as any).mustChangePassword || false,
-      },
+      data: { token, expiresIn: JWT_EXPIRES_IN, user: { id: admin.id, username: admin.username, role: 'admin' } },
     });
   } catch (error: any) {
     console.error('Login error:', error);

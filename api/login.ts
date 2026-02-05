@@ -9,11 +9,8 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 const VERCEL_ENV = process.env.VERCEL_ENV || 'development';
 const IS_PRODUCTION = VERCEL_ENV === 'production';
 
-// 限速配置：5分钟内失败10次
 const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000;
 const RATE_LIMIT_MAX_ATTEMPTS = 10;
-
-// 默认密码（生产环境禁止使用）
 const DEFAULT_PASSWORD = 'admin123';
 
 function getClientIP(req: VercelRequest): string {
@@ -62,21 +59,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       
       if (failedAttempts >= RATE_LIMIT_MAX_ATTEMPTS) {
         await prisma.$disconnect();
-        const retryAfter = Math.ceil(RATE_LIMIT_WINDOW_MS / 1000);
-        res.setHeader('Retry-After', retryAfter.toString());
         return res.status(429).json({ 
           success: false, 
           error: '尝试次数过多，请5分钟后再试', 
-          code: 'RATE_LIMITED', 
-          retryAfter 
+          code: 'RATE_LIMITED'
         });
       }
     } catch (e: any) {
-      if (e.code === 'P2021') rateLimitEnabled = false;
+      if (e.code === 'P2021' || e.code === 'P2022') rateLimitEnabled = false;
       else throw e;
     }
     
-    const admin = await prisma.admin.findUnique({ where: { username: String(username) } });
+    // 只选择必要的字段（兼容旧数据库）
+    const admin = await prisma.admin.findUnique({ 
+      where: { username: String(username) },
+      select: { id: true, username: true, password: true }
+    });
     
     if (!admin) {
       if (rateLimitEnabled) { try { await prisma.loginAttempt.create({ data: { ip: clientIP, success: false } }); } catch {} }
@@ -103,9 +101,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
     
-    // 检查是否强制修改密码
-    const mustChangePassword = (admin as any).mustChangePassword || false;
-    
     if (rateLimitEnabled) {
       try {
         await prisma.loginAttempt.create({ data: { ip: clientIP, success: true } });
@@ -117,7 +112,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await prisma.$disconnect();
     
     const token = jwt.sign(
-      { userId: admin.id, username: admin.username, role: (admin as any).role || 'admin' },
+      { userId: admin.id, username: admin.username, role: 'admin' },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'] }
     );
@@ -127,13 +122,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       data: { 
         token, 
         expiresIn: JWT_EXPIRES_IN, 
-        user: { 
-          id: admin.id, 
-          username: admin.username, 
-          role: (admin as any).role || 'admin',
-          email: (admin as any).email || null,
-        },
-        mustChangePassword,
+        user: { id: admin.id, username: admin.username, role: 'admin' },
       },
     });
   } catch (error: any) {

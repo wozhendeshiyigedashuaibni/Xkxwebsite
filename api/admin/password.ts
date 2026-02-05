@@ -20,7 +20,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ success: false, error: '服务器配置错误', code: 'JWT_SECRET_MISSING' });
   }
   
-  // 验证 JWT
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ success: false, error: '请先登录', code: 'NO_TOKEN' });
@@ -52,7 +51,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { PrismaClient } = await import('@prisma/client');
     const prisma = new PrismaClient();
     
-    const admin = await prisma.admin.findUnique({ where: { id: userId } });
+    // 只选择必要字段
+    const admin = await prisma.admin.findUnique({ 
+      where: { id: userId },
+      select: { id: true, password: true }
+    });
     
     if (!admin) {
       await prisma.$disconnect();
@@ -68,10 +71,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await prisma.admin.update({
       where: { id: userId },
-      data: { 
-        password: hashedPassword,
-        mustChangePassword: false,  // 清除强制修改标记
-      },
+      data: { password: hashedPassword },
     });
     
     await prisma.$disconnect();
