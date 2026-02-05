@@ -17,7 +17,8 @@
     "db:check": "node check-supabase.js",
     "setup": "bash scripts/quick-setup.sh",
     "create-admin": "npx tsx scripts/create-admin.ts",
-    "test:api": "npx tsx scripts/test-api.ts"
+    "test:api": "npx tsx scripts/test-api.ts",
+    "setup:auto-push": "bash scripts/setup-auto-push.sh"
   },
   "dependencies": {
     "@prisma/client": "^6.19.2",

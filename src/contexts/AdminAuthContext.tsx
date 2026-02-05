@@ -1,17 +1,19 @@
 /**
  * Admin Authentication Context
- * 管理员鉴权上下文 - 管理登录状态、Token 存储和 API 调用鉴权
+ * 管理员鉴权上下文 - 统一使用 /api/login
  */
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { API_BASE_URL } from '../config/api';
 
-interface Admin {
+interface AdminUser {
+  id: number;
   username: string;
+  role: string;
 }
 
 interface AdminAuthContextType {
-  admin: Admin | null;
+  user: AdminUser | null;
   token: string | null;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
@@ -25,19 +27,18 @@ const TOKEN_KEY = 'admin_token';
 const ADMIN_KEY = 'admin_user';
 
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
-  const [admin, setAdmin] = useState<Admin | null>(null);
+  const [user, setUser] = useState<AdminUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 初始化时从 localStorage 恢复登录状态
   useEffect(() => {
     const storedToken = localStorage.getItem(TOKEN_KEY);
-    const storedAdmin = localStorage.getItem(ADMIN_KEY);
+    const storedUser = localStorage.getItem(ADMIN_KEY);
 
-    if (storedToken && storedAdmin) {
+    if (storedToken && storedUser) {
       try {
         setToken(storedToken);
-        setAdmin(JSON.parse(storedAdmin));
+        setUser(JSON.parse(storedUser));
       } catch (error) {
         console.error('Failed to restore admin session:', error);
         localStorage.removeItem(TOKEN_KEY);
@@ -49,47 +50,47 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (username: string, password: string) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+    const response = await fetch(`${API_BASE_URL}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Login failed');
-      }
+    const data = await response.json();
 
-      const data = await response.json();
-      
-      // 保存 token 和用户信息
-      localStorage.setItem(TOKEN_KEY, data.token);
-      localStorage.setItem(ADMIN_KEY, JSON.stringify({ username: data.username }));
-      
-      setToken(data.token);
-      setAdmin({ username: data.username });
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(data.error || '登录失败');
     }
+
+    const authToken = data?.data?.token;
+    const authUser = data?.data?.user;
+
+    if (!authToken || !authUser?.username) {
+      throw new Error('登录响应格式错误');
+    }
+
+    localStorage.setItem(TOKEN_KEY, authToken);
+    localStorage.setItem(ADMIN_KEY, JSON.stringify(authUser));
+
+    setToken(authToken);
+    setUser(authUser);
   };
 
   const logout = () => {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(ADMIN_KEY);
     setToken(null);
-    setAdmin(null);
+    setUser(null);
   };
 
   const value: AdminAuthContextType = {
-    admin,
+    user,
     token,
     login,
     logout,
-    isAuthenticated: !!token && !!admin,
+    isAuthenticated: !!token && !!user,
     isLoading,
   };
 

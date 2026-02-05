@@ -50,6 +50,12 @@ npm run dev
 👉 **详细配置指南**: [SUPABASE_CONFIG.md](./SUPABASE_CONFIG.md)  
 👉 **后端设置**: [BACKEND_SETUP.md](./BACKEND_SETUP.md) for detailed setup
 
+
+## Production Backend (Vercel)
+
+- 线上环境统一使用 `api/` 目录下的 Vercel Functions（如 `/api/login`、`/api/admin/*`）。
+- `server/` 目录仅保留为本地调试参考，不作为线上部署入口，避免与 `api/` 双后端并存导致鉴权逻辑冲突。
+
 ## Features
 
 - ✅ **Product Catalog** - 6 clothing categories with filtering
@@ -57,7 +63,7 @@ npm run dev
 - ✅ **Contact Forms** - Lead collection with file uploads
 - ✅ **Multi-language** - Support for English, Chinese, and Arabic
 - ✅ **Responsive Design** - Mobile-first approach
-- ✅ **Backend API** - Node.js + Express + SQLite + Prisma
+- ✅ **Backend API** - Vercel Functions (`api/`) + Prisma
 - ✅ **Mock Data Mode** - Develop without backend dependencies
 
 ## Tech Stack
@@ -99,6 +105,22 @@ VITE_USE_MOCK=true
 # API URL (only needed if backend runs on different port)
 # VITE_API_URL=http://localhost:3001/api
 ```
+
+## GitHub 自动同步（提交后自动 push）
+
+项目已内置 `post-commit` hook（`.githooks/post-commit`）：
+
+1. 首次执行（一次即可）：
+   ```bash
+   npm run setup:auto-push
+   ```
+2. 之后每次 `git commit` 完成后，会自动执行 `git push origin <当前分支>`。
+3. 临时禁用自动推送：
+   ```bash
+   AUTO_PUSH_TO_GITHUB=0 git commit -m "message"
+   ```
+
+> 注意：需要本地已配置 `origin` 远端并具备 push 权限。
 
 ## Available Scripts
 
