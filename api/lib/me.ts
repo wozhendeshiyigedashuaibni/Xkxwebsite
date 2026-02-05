@@ -1,6 +1,6 @@
 // api/auth/me.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { prisma } from '../lib/prisma';
+import { getPrisma } from '../lib/prisma';
 import { verifyToken, extractToken } from '../lib/auth';
 import { withCors } from '../lib/cors';
 import { successResponse, errorResponse, handleError } from '../lib/response';
@@ -11,6 +11,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
   }
   
   try {
+    const prisma = await getPrisma();
     const token = extractToken(req.headers.authorization as string);
     
     if (!token) {

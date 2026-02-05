@@ -1,7 +1,7 @@
 // api/products/[slug].ts
 // 获取产品详情（公开 API）
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { prisma } from '../lib/prisma';
+import { getPrisma } from '../lib/prisma';
 import { withCors } from '../lib/cors';
 import { successResponse, errorResponse, handleError } from '../lib/response';
 
@@ -12,6 +12,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
   }
   
   try {
+    const prisma = await getPrisma();
     const { slug } = req.query;
     
     if (!slug || typeof slug !== 'string') {

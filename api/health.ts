@@ -1,7 +1,7 @@
 // api/health.ts
 // 健康检查 API
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { prisma } from './lib/prisma';
+import { getPrisma } from './lib/prisma';
 import { withCors } from './lib/cors';
 import { successResponse, errorResponse } from './lib/response';
 
@@ -11,6 +11,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
   }
   
   try {
+    const prisma = await getPrisma();
     // 测试数据库连接
     await prisma.$queryRaw`SELECT 1`;
     

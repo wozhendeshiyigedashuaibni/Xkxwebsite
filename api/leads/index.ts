@@ -1,7 +1,7 @@
 // api/leads/index.ts
 // 提交询盘（公开 API）
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { prisma } from '../lib/prisma';
+import { getPrisma } from '../lib/prisma';
 import { withCors } from '../lib/cors';
 import { rateLimit, RATE_LIMITS } from '../lib/rate-limit';
 import { successResponse, errorResponse, handleError } from '../lib/response';
@@ -13,6 +13,8 @@ async function handler(req: VercelRequest, res: VercelResponse) {
   }
   
   try {
+    const prisma = await getPrisma();
+    
     // 速率限制
     const ip = req.headers['x-forwarded-for'] as string || 'unknown';
     const rateLimitResult = rateLimit(`leads:${ip}`, RATE_LIMITS.api.limit, RATE_LIMITS.api.window);

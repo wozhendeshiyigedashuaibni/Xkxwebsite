@@ -1,7 +1,7 @@
 // api/auth/me.ts
 // 验证当前用户 Token 并返回用户信息
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { prisma } from '../lib/prisma';
+import { getPrisma } from '../lib/prisma';
 import { verifyToken, extractToken } from '../lib/auth';
 import { withCors } from '../lib/cors';
 import { successResponse, errorResponse, handleError } from '../lib/response';
@@ -13,6 +13,8 @@ async function handler(req: VercelRequest, res: VercelResponse) {
   }
   
   try {
+    const prisma = await getPrisma();
+    
     // 提取 Token
     const token = extractToken(req.headers.authorization as string);
     

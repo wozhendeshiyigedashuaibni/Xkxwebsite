@@ -1,6 +1,6 @@
 // api/auth/login.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { prisma } from '../lib/prisma';
+import { getPrisma } from '../lib/prisma';
 import { comparePassword, generateToken } from '../lib/auth';
 import { withCors } from '../lib/cors';
 import { successResponse, errorResponse, handleError } from '../lib/response';
@@ -11,6 +11,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
   }
   
   try {
+    const prisma = await getPrisma();
     const { username, password } = req.body;
     
     if (!username || !password) {

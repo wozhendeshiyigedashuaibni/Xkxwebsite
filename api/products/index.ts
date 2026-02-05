@@ -1,7 +1,7 @@
 // api/products/index.ts
 // 获取产品列表（公开 API）
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { prisma } from '../lib/prisma';
+import { getPrisma } from '../lib/prisma';
 import { withCors } from '../lib/cors';
 import { successResponse, errorResponse, handleError } from '../lib/response';
 
@@ -12,6 +12,8 @@ async function handler(req: VercelRequest, res: VercelResponse) {
   }
   
   try {
+    const prisma = await getPrisma();
+    
     // 解析查询参数
     const {
       page = '1',

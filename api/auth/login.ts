@@ -1,7 +1,7 @@
 // api/auth/login.ts
 // 管理员登录 API
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { prisma } from '../lib/prisma';
+import { getPrisma } from '../lib/prisma';
 import { comparePassword, generateToken } from '../lib/auth';
 import { withCors } from '../lib/cors';
 import { rateLimit, RATE_LIMITS } from '../lib/rate-limit';
@@ -14,6 +14,8 @@ async function handler(req: VercelRequest, res: VercelResponse) {
   }
   
   try {
+    const prisma = await getPrisma();
+    
     // 速率限制检查
     const ip = req.headers['x-forwarded-for'] as string || 'unknown';
     const rateLimitResult = rateLimit(`login:${ip}`, RATE_LIMITS.login.limit, RATE_LIMITS.login.window);
