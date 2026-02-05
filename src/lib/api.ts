@@ -6,8 +6,8 @@
 import { getMockProducts, getMockProduct } from './mockData';
 import { API_BASE_URL } from '../config/api';
 
-// Temporarily use mock data for products until API is fixed
-const USE_MOCK_FOR_PRODUCTS = true;
+// Set to false to use real API (with fallback to mock data on error)
+const USE_MOCK_FOR_PRODUCTS = false;
 
 interface ApiError {
   error: string;

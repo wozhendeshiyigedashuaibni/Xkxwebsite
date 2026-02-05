@@ -13,7 +13,8 @@
     "db:generate": "npx prisma generate",
     "db:seed": "node server/seed.js",
     "db:studio": "npx prisma studio",
-    "db:check": "node check-supabase.js"
+    "db:check": "node check-supabase.js",
+    "admin:setup": "node scripts/setup-admin.js"
   },
   "dependencies": {
     "@prisma/client": "^6.19.2",

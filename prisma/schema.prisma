@@ -55,6 +55,7 @@ model Lead {
   email     String
   company   String?
   phone     String?
+  whatsapp  String?
   message   String
   files     String?  // JSON array
   status    String   @default("new")
