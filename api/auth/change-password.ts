@@ -78,7 +78,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // 验证当前密码
-    const isCurrentValid = await bcrypt.compare(currentPassword, admin.password);
+    const isCurrentValid = await bcrypt.compare(currentPassword, admin.passwordHash);
     if (!isCurrentValid) {
       return error(res, '当前密码错误');
     }
@@ -94,7 +94,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // 更新密码
     await prisma.admin.update({
       where: { id: auth.admin.id },
-      data: { password: hashedPassword },
+      data: { passwordHash: hashedPassword },
     });
 
     return json(res, {
