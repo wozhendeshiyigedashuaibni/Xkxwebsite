@@ -56,3 +56,6 @@ prisma/migrations/*
 .cache/
 .parcel-cache/
 .eslintcache
+.vercel
+.env*.local
+.env*

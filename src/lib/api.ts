@@ -42,10 +42,16 @@ class ApiClient {
       }
 
       if (!response.ok) {
-        const error: ApiError = await response.json().catch(() => ({
-          error: 'Network error',
-        }));
-        throw new Error(error.error || `HTTP ${response.status}`);
+        // Try to get error details from response body
+        let errorMessage: string;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || `HTTP ${response.status}`;
+        } catch {
+          // Response body is not JSON or empty
+          errorMessage = `HTTP ${response.status}: ${response.statusText || 'Request failed'}`;
+        }
+        throw new Error(errorMessage);
       }
 
       return await response.json();
@@ -68,10 +74,16 @@ class ApiClient {
       });
 
       if (!response.ok) {
-        const error: ApiError = await response.json().catch(() => ({
-          error: 'Network error',
-        }));
-        throw new Error(error.error || `HTTP ${response.status}`);
+        // Try to get error details from response body
+        let errorMessage: string;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || `HTTP ${response.status}`;
+        } catch {
+          // Response body is not JSON or empty
+          errorMessage = `HTTP ${response.status}: ${response.statusText || 'Request failed'}`;
+        }
+        throw new Error(errorMessage);
       }
 
       return await response.json();

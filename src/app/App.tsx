@@ -15,6 +15,9 @@ import { ContactPage } from './pages/ContactPage';
 import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 import LoginPage from '@/admin/LoginPage';
 import Dashboard from '@/admin/Dashboard';
+import PasswordChange from '@/admin/PasswordChange';
+import ForgotPassword from '@/admin/ForgotPassword';
+import ResetPassword from '@/admin/ResetPassword';
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -71,8 +74,12 @@ function AppContent() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
+          {/* 统一后台登录页：src/admin/LoginPage */}
           <Route path="/admin/login" element={<LoginPage />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/password" element={<PasswordChange />} />
+          <Route path="/admin/forgot-password" element={<ForgotPassword />} />
+          <Route path="/admin/reset-password" element={<ResetPassword />} />
         </Routes>
       </main>
 

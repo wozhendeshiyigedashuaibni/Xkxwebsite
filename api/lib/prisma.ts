@@ -1,20 +1,12 @@
-/**
- * Prisma Client Singleton for Vercel Serverless
- * 避免在 serverless 环境中创建多个连接
- */
-
 import { PrismaClient } from '@prisma/client';
 
 declare global {
-  var prisma: PrismaClient | undefined;
+  // eslint-disable-next-line no-var
+  var __prismaClient: PrismaClient | undefined;
 }
 
-const prisma = global.prisma || new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-});
+export const prisma = global.__prismaClient || new PrismaClient();
 
 if (process.env.NODE_ENV !== 'production') {
-  global.prisma = prisma;
+  global.__prismaClient = prisma;
 }
-
-export default prisma;
