@@ -1,6 +1,6 @@
 /**
  * Admin Authentication Context
- * 管理员鉴权上下文 - 统一使用 /api/login
+ * 管理员鉴权上下文 - 统一使用 /api/auth
  */
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -50,7 +50,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (username: string, password: string) => {
-    const response = await fetch(`${API_BASE_URL}/login`, {
+    const response = await fetch(`${API_BASE_URL}/auth`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

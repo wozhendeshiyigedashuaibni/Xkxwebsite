@@ -42,8 +42,8 @@ export default function PasswordChange() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/admin/password', {
-        method: 'POST',
+      const response = await fetch('/api/auth', {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
