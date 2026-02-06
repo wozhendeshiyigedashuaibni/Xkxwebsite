@@ -9,7 +9,7 @@ B2B 女装 OEM/ODM 制造商网站后台管理界面完整使用说明。
 ### 登录页面
 
 ```
-http://localhost:5173/admin-login
+http://localhost:5173/admin/login
 ```
 
 ### 管理页面
@@ -47,7 +47,7 @@ npm run dev
 如果还没有管理员账号，需要先创建：
 
 ```bash
-curl -X POST http://localhost:3001/api/auth/register \
+curl -X POST http://localhost:3001/api/register \
   -H "Content-Type: application/json" \
   -d '{
     "username": "admin",
@@ -61,7 +61,7 @@ curl -X POST http://localhost:3001/api/auth/register \
 
 ### 步骤 4：登录后台
 
-1. 打开浏览器访问：`http://localhost:5173/admin-login`
+1. 打开浏览器访问：`http://localhost:5173/admin/login`
 2. 输入账号密码：
    - Username: `admin`
    - Password: `admin123`
@@ -269,7 +269,7 @@ node server/seed-content.js
 - `/admin/products`
 - `/admin/content`
 
-未登录访问会自动跳转到 `/admin-login`。
+未登录访问会自动跳转到 `/admin/login`。
 
 ### 登出
 

@@ -101,7 +101,7 @@ export function Footer() {
           <p>{t('footer.copyright')}</p>
           {/* Hidden Admin Link */}
           <Link 
-            to="/admin-login" 
+            to="/admin/login" 
             className="inline-block mt-2 opacity-20 hover:opacity-100 transition-opacity text-xs"
             title="Admin Panel"
           >

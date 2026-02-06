@@ -27,7 +27,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   // 未登录重定向到登录页
   if (!isAuthenticated) {
-    return <Navigate to="/admin-login" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
 
   return <>{children}</>;

@@ -29,7 +29,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleLogout = () => {
     logout();
-    navigate('/admin-login');
+    navigate('/admin/login');
   };
 
   const navItems = [
