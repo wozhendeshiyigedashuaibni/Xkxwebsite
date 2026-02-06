@@ -10,9 +10,9 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import prisma from '../lib/prisma';
-import { formatProduct } from '../lib/formatters';
-import { json, serverError } from '../lib/response';
+import prisma from '../../lib/prisma';
+import { formatProduct } from '../../lib/formatters';
+import { json, serverError } from '../../lib/response';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // 只允许 GET 请求

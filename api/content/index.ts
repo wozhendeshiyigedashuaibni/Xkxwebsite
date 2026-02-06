@@ -6,8 +6,8 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import prisma from '../lib/prisma';
-import { json, serverError } from '../lib/response';
+import prisma from '../../lib/prisma';
+import { json, serverError } from '../../lib/response';
 
 // 安全的 JSON 解析
 function safeJsonParse(str: string | null | undefined, fallback: any = null) {

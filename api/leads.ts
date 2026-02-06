@@ -15,9 +15,9 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import prisma from './lib/prisma';
-import { checkRateLimit, getClientIP } from './lib/rateLimit';
-import { json, error, serverError, tooManyRequests } from './lib/response';
+import prisma from '../lib/prisma';
+import { checkRateLimit, getClientIP } from '../lib/rateLimit';
+import { json, error, serverError, tooManyRequests } from '../lib/response';
 
 // 邮箱格式验证
 function isValidEmail(email: string): boolean {

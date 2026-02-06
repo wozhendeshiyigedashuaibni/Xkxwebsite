@@ -8,10 +8,10 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import prisma from '../lib/prisma';
-import { formatContent } from '../lib/formatters';
-import { authenticateRequest } from '../lib/auth';
-import { json, error, notFound, serverError, unauthorized } from '../lib/response';
+import prisma from '../../lib/prisma';
+import { formatContent } from '../../lib/formatters';
+import { authenticateRequest } from '../../lib/auth';
+import { json, error, notFound, serverError, unauthorized } from '../../lib/response';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // 验证认证
