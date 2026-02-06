@@ -20,7 +20,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/forgot-password', {
+      const response = await fetch('/api/auth?action=forgot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -45,17 +45,17 @@ export default function ForgotPassword() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold text-center mb-6">忘记密码</h1>
-        
+
         <p className="text-gray-600 text-sm mb-6 text-center">
           请输入您的注册邮箱，我们将发送密码重置链接
         </p>
-        
+
         {error && (
           <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
             {error}
           </div>
         )}
-        
+
         {success && (
           <div className="bg-green-100 text-green-700 p-3 rounded mb-4">
             {success}
@@ -82,7 +82,7 @@ export default function ForgotPassword() {
           >
             {loading ? '提交中...' : '发送重置链接'}
           </button>
-          
+
           <div className="text-center">
             <Link to="/admin/login" className="text-sm text-blue-600 hover:text-blue-800">
               返回登录
