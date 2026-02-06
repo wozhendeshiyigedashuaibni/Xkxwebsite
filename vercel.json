@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npx prisma db push --skip-generate && npx tsx prisma/seed.ts && npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "vite",
@@ -7,7 +7,7 @@
   "functions": {
     "api/**/*.ts": {
       "maxDuration": 10,
-      "includeFiles": "api/lib/**"
+      "includeFiles": "lib/**"
     }
   },
   "rewrites": [

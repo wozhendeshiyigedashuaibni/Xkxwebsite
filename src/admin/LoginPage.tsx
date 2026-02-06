@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -78,12 +78,6 @@ export default function LoginPage() {
               placeholder="请输入密码"
               required
             />
-          </div>
-
-          <div className="mb-6 text-right">
-            <Link to="/admin/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
-              忘记密码？
-            </Link>
           </div>
 
           <button
